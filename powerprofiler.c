@@ -1,4 +1,4 @@
-#include "/home/kona/research2018/pwrapi-ref/src/pwr/pwr.h"
+#include "/home/kona/pwr2018/pwrapi-ref/src/pwr/pwr.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
@@ -29,7 +29,7 @@ int measure_children(PWR_Obj o)
     char name[100];
     PWR_ObjGetName( o, name, 100 );
     sprintf(buffer,"%f joules, %lu ms, %s\n",	value, ms_now(), name);
-    write_data(buffer);
+    write_data(buffer,"ENERGY");
   }
 
   PWR_ObjType objType;
