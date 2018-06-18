@@ -1,0 +1,219 @@
+This software is a reference implementation of the PowerAPI. The main purpose 
+for the creation of the reference was to test the viability of API functions
+during the design of the API specification. The reference is also being used
+to test implementation details such as how to interface with different types
+of hardware and communication between agents. The reference is a work in
+progress and only a subset of the functions listed in the specification have
+been implemented.
+
+The main component of this software is libpwr (located in directory pwr). 
+Any application that uses the PowerAPI must link against libpwr.so. 
+It implements the API and is designed as a hardware neutral framework. The
+framework accesses platform specific power measurement and control via plugins.
+The plugins are implemented as dynamic libraries (located in directory plugins).
+There are currently plugins for several platforms as well as a dummy plugin
+used for development. The dummy plugin is trivial and a good place to look when
+implementing a plugin for a new platform. 
+
+libpwr can be configured via a static XML file describing the hardware or via
+hwloc. XML was chosen for expedient development not performance. libpwr has an
+object that interfaces with the XML file via TinyXML-2. TinyXML-2 is 
+included with this distribution and is already integrated into this
+software package.  The original software can also be found at 
+"https://github.com/leethomason/tinyxml2". Creating a XML configuration is
+error prone so support for automatic hierarchy detection was added to the
+implementation. This automatic method is called hwloc because it uses hwloc to
+determine the Power object hierarchy. 
+
+The reference also explores accessing the API via a scripting language such as
+Python. The Python binding is done via Swig and is
+located in directory swig. 
+
+The examples directory contains simple “C” and Python programs that can be 
+examined to get a feeling for how one would use the Power API. Note that the
+execution of example programs rely on environment variables POWERAPI_CONFIG and
+POWERAPI_ROOT. POWERAPI_CONFIG tells the PowerAPI library what system
+configuration file to use. POWERAPI_ROOT tells the PowerAPI library its entry
+point. Consult the run scripts in examples on how to set these variables.
+
+Build
+-----
+
+The configuration of this code base follows normal autoconf/automake conventions. 
+
+run:
+
+autogen.sh
+configure --prefix="your install directory"
+make install
+
+Your install directory should look like:
+
+volta:~/pwrGIT/pwrapi-ref/build/install> ls
+bin  config  examples  include  lib  lib64  script  share
+volta:~/pwrGIT/pwrapi-ref/build/install>
+
+Run
+---
+
+With the above configuration the only thing that will work is the "dummyTest"
+program. The "dummyTest" program is used to test basic functionality of the
+implementation and as an example of how to program using the Power API. The "dummyTest" 
+example uses xml configuration and the dummy_dev plugin. The dummy_dev plugin is just
+a stub and does not interact with hardware.
+
+To run "dummyTest".
+
+volta:~/pwrGIT/pwrapi-ref/build/install> source examples/script/xml_profile
+volta:~/pwrGIT/pwrapi-ref/build/install> dummyTest
+I am a `Node`
+child plat.cab0.node0.core0
+child plat.cab0.node0.core1
+PWR_ObjAttrGetValue(PWR_ATTR_ENERGY) value=200000000.000000 ts=`Fri Apr 29 13:08:11 2016`
+PWR_ObjAttrSetValue(PWR_ATTR_ENERGY) value=25.812000
+PWR_ObjAttrGetValues(PWR_ATTR_ENERGY) value=51.624000 ts=`Fri Apr 29 13:08:11 2016`
+PWR_ObjAttrSetValues(PWR_ATTR_ENERGY) value=100.100000
+PWR_ObjAttrGetValue(PWR_ATTR_ENERGY) value=200.200000 ts=`Fri Apr 29 13:08:11 2016`
+PWR_GrpAttrSetValue(PWR_ATTR_ENERGY) value=0.100000
+PWR_ObjAttrGetValue(PWR_ATTR_ENERGY) value=0.200000 ts=`Fri Apr 29 13:08:11 2016`
+PWR_StatGetValue(PWR_ATTR_ENERGY) value=101.081396
+PWR_StatGetValue(PWR_ATTR_ENERGY) start=1461956891.332830
+PWR_StatGetValue(PWR_ATTR_ENERGY) stop=1461956892.332830
+stat: value=101.129473 start=1461956892.332965 stop=1461956893.332965
+stat: value=100.870015 start=1461956892.332970 stop=1461956893.332970
+volta:~/pwrGIT/pwrapi-ref/build/install>
+
+
+Running with Hwloc
+------------------
+
+If you have "hwloc" installed on your system you can configure via:
+
+configure --prefix="your install directory" --with-hwloc="where hwloc is installed" 
+
+This configuration adds the ability to auto detect the Power object hierarchy
+as mentioned above. 
+
+Once built you can run "pwrls". "pwrls" traverses the Power object hierarchy and prints the
+objects and supported attributes. Note that dummy_dev plugin is used.
+
+volta:~/pwrGIT/pwrapi-ref/build/install> source script/hwloc_profile
+volta:~/pwrGIT/pwrapi-ref/build/install> pwrls
+name=`plat` type=Platform: Energy
+    name=`plat.node0` type=Node: Energy
+        name=`plat.node0.socket0` type=Socket: Energy
+            name=`plat.node0.socket0.core0` type=Core: Power Energy
+            name=`plat.node0.socket0.core1` type=Core: Power Energy
+            name=`plat.node0.socket0.core2` type=Core: Power Energy
+            name=`plat.node0.socket0.core3` type=Core: Power Energy
+            name=`plat.node0.socket0.core4` type=Core: Power Energy
+            name=`plat.node0.socket0.core5` type=Core: Power Energy
+            name=`plat.node0.socket0.core6` type=Core: Power Energy
+            name=`plat.node0.socket0.core7` type=Core: Power Energy
+volta:~/pwrGIT/pwrapi-ref/build/install>
+
+One thing to note about the above output is that some objects have both Power and Energy 
+attributes and some have only Energy. This is because Energy can be aggregated from children and Power can not.
+
+
+Running with the Linux Power Capping Framework Plugin
+------------------------------------------------------
+
+Plugin libpwr_powercap.a is a proof of concept plugin that allows a user
+application to read energy data through the Linux Power Capping Framework.
+
+To use this plugin with hwloc configuration run:
+
+source install/script/hwloc_powercap_profile 
+
+To see what the Power API hierarchy looks like run:
+
+[mjleven@node69 script]$ pwrls
+name=`plat` type=Platform: Energy
+    name=`plat.node0` type=Node: Energy
+        name=`plat.node0.mem0` type=Memory: Energy
+        name=`plat.node0.mem1` type=Memory: Energy
+        name=`plat.node0.socket0` type=Socket: Energy
+        name=`plat.node0.socket1` type=Socket: Energy
+[mjleven@node69 script]$
+
+The above was run on a dual socket Intel(R) Xeon(R) CPU E5-2698 v3 @ 2.30GHz 
+machine.
+
+Now lets read the energy:
+
+[mjleven@node69 script]$ pwrenergy -o plat.node0.socket0 -s 5
+plat.node0.socket0: 22 joules, 0 watts
+plat.node0.socket0: 46 joules, 24 watts
+plat.node0.socket0: 67 joules, 21 watts
+plat.node0.socket0: 79 joules, 12 watts
+plat.node0.socket0: 92 joules, 12 watts
+[mjleven@node69 script]$
+
+[mjleven@node69 script]$ pwrenergy -o plat.node0.mem0 -s 5
+plat.node0.mem0: 15 joules, 0 watts
+plat.node0.mem0: 29 joules, 15 watts
+plat.node0.mem0: 44 joules, 15 watts
+plat.node0.mem0: 59 joules, 15 watts
+plat.node0.mem0: 73 joules, 15 watts
+[mjleven@node69 script]$
+
+[mjleven@node69 script]$ pwrenergy -o plat.node0 -s 4
+plat.node0: 49 joules, 0 watts
+plat.node0: 99 joules, 49 watts
+plat.node0: 148 joules, 49 watts
+plat.node0: 198 joules, 50 watts
+[mjleven@node69 script]$
+
+Note that the powercap plugin does not check for counter wrap around.
+Note that you need a linux kernel that supports the "Power Capping Framework".
+Note that this plugin has minimal testing on one machine.
+
+Running with the RAPL Plugin
+----------------------------
+
+Plugin libpwr_rapldev reads energy data via /dev/cpu/*/msr. You must have
+elevated privilege to use this plugin.
+ 
+[root@gato2 script]# source hwloc_rapl_profile
+[root@gato2 script]# pwrls
+name=`plat` type=Platform: Energy
+    name=`plat.node0` type=Node: Energy
+        name=`plat.node0.mem0` type=Memory: Energy
+        name=`plat.node0.mem1` type=Memory: Energy
+        name=`plat.node0.socket0` type=Socket: Energy
+        name=`plat.node0.socket1` type=Socket: Energy
+[root@gato2 script]# pwrenergy -o plat.node0
+plat.node0: 314996 joules, 0 watts
+[root@gato2 script]# pwrenergy -o plat.node0 -s 5
+plat.node0: 315257 joules, 0 watts
+plat.node0: 315296 joules, 39 watts
+plat.node0: 315334 joules, 38 watts
+plat.node0: 315372 joules, 38 watts
+plat.node0: 315410 joules, 38 watts
+[root@gato2 script]# pwrenergy -o plat.node0.mem0 -s 5
+plat.node0.mem0: 42660 joules, 0 watts
+plat.node0.mem0: 42668 joules, 8 watts
+plat.node0.mem0: 42677 joules, 8 watts
+plat.node0.mem0: 42685 joules, 8 watts
+plat.node0.mem0: 42693 joules, 8 watts
+[root@gato2 script]# pwrenergy -o plat.node0.socket0 -s 5
+plat.node0.socket0: 107759 joules, 0 watts
+plat.node0.socket0: 107772 joules, 13 watts
+plat.node0.socket0: 107785 joules, 13 watts
+plat.node0.socket0: 107797 joules, 13 watts
+plat.node0.socket0: 107810 joules, 13 watts
+[root@gato2 script]#
+
+Note that the energy value for the socket object is derived from adding 
+PP0 and PP1. The energy value for the memory object is based on RAPL DRAM. 
+
+Debug
+-----
+
+To debug configure with --enable-debug. At this point the debug 
+code is compiled into the libraries but will not print. To enable printing you must set the 
+environment variable POWERAPI_DEBUG=31. This will turn on all debug.
+
+
+If you have questions or comments email contact-powerapi@sandia.gov.
