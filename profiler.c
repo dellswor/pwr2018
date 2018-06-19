@@ -6,15 +6,18 @@
 #include <pthread.h>
 #include <assert.h>
 #include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
+
 
 static int monitoring = 1;
 static int writing = 1;
 
 #include "pwr.h"
 #include "time.c"
-#include "file_streamer.c"
 #include "powerprofiler.c"
-#include "blocking_wrappers.c"
 
 int main()
 {
@@ -23,15 +26,30 @@ int main()
 
 pthread_t powThread;
 int profrank;
+int logfd;
+FILE *logfile=NULL;
+#include "mpi_wrappers.c"
+
+
 int init()
 {
 	MPI_Comm_rank(MPI_COMM_WORLD, &profrank);
-	char hostname[64];
-	gethostname(hostname,64);
+	long hostid = gethostid();
 	char fname[100];
-	sprintf(fname, "%s.dat", hostname);
-	int start_rc = start_write(fname);
+	sprintf(fname, "%lu.dat", hostid);
 
+	logfd=open(fname,O_WRONLY|O_CREAT|O_NDELAY, S_IRUSR|S_IWUSR);
+	if(logfd<0)
+	{
+		printf("failed to get file descriptor: %i, errno: %i\n",logfd,errno);
+		return 1;	
+	}
+	logfile = fdopen(logfd, "w");
+	if(logfile==NULL)
+	{
+		printf("failed to open erno is %i\n",errno);
+		return 2;
+	}
 }
 int MPI_Init_thread(int *argc, char ***argv, int required, int *provided)
 {
@@ -67,8 +85,10 @@ int MPI_Finalize()
 	{
 		pthread_join(powThread,NULL);
 	}
-	//fprintf(logfile,"end %lu\n", ms_now()/1000);
-	end_write();
+	
+	fclose(logfile);
+	close(logfd);
+
 	r=PMPI_Finalize();
 	return r;
 }

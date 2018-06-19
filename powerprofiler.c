@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <unistd.h>
+#include <inttypes.h>
 
 #define INTERVAL_SEC 0
 #define INTERVAL_NANO 100000000
@@ -15,6 +16,9 @@ PWR_Cntxt   cntxt;
 PWR_Time ts;
 int         rc;
 double value;
+int powerlogfd;
+FILE *powerlogfile=NULL;
+
 
 int measure_children(PWR_Obj o)
 {
@@ -22,25 +26,12 @@ int measure_children(PWR_Obj o)
 	if(PWR_ObjAttrIsValid(o,PWR_ATTR_ENERGY)==PWR_RET_SUCCESS)
 	{
 		int r;
-		//PWR_ObjAttrSetValue( self, PWR_ATTR_ENERGY, &inite);
 		r = PWR_ObjAttrGetValue( self, PWR_ATTR_ENERGY, &value, &ts );
-		char buffer[1000];
 		char name[100];
+		uint64_t osid;
+		PWR_ObjAttrGetValue(self, PWR_ATTR_OS_ID, &osid, &ts);
 		PWR_ObjGetName( o, name, 100 );
-		sprintf(buffer,"%f joules, %lu ms, %s\n", value, ms_now(), name);
-		write_data(buffer,"ENERGY");
-	}
-	if(PWR_ObjAttrIsValid(o,PWR_ATTR_POWER)==PWR_RET_SUCCESS)
-	{
-		int r;
-		//PWR_ObjAttrSetValue( self, PWR_ATTR_POWER, &inite);
-		r = PWR_ObjAttrGetValue( self, PWR_ATTR_POWER, &value, &ts );
-		char buffer[1000];
-		char name[100];
-		PWR_ObjGetName( o, name, 100 );
-		sprintf(buffer,"%f watts, %lu ms, %s\n", value, ms_now(), name);
-		write_data(buffer,"POWER");
-
+		fprintf(powerlogfile,"ENERGY, %f joules, %lu ms, %s, %"PRIu64"\n", value, ms_now(), name, osid);
 	}
 
 	PWR_ObjType objType;
@@ -75,6 +66,18 @@ int measure_energy()
 }
 void *power_measurement(void *arg)
 {
+	
+	powerlogfd=open("power.dat",O_WRONLY|O_CREAT|O_NDELAY, S_IRUSR|S_IWUSR);
+	if(powerlogfd<0)
+	{
+		printf("failed to get file descriptor: %i, errno: %i\n",powerlogfd,errno);
+	}
+	powerlogfile = fdopen(powerlogfd, "w");
+	if(powerlogfile==NULL)
+	{
+		printf("failed to open erno is %i\n",errno);
+	}
+
 	// Get a context
 	rc = PWR_CntxtInit( PWR_CNTXT_DEFAULT, PWR_ROLE_APP, "App", &cntxt );
 	rc = PWR_CntxtGetEntryPoint( cntxt, &self );
@@ -84,4 +87,7 @@ void *power_measurement(void *arg)
 		measure_energy();
 		sleep_abs(INTERVAL_NANO);
 	}
+	fclose(powerlogfile);
+	close(powerlogfd);
+
 }
