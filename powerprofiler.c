@@ -23,13 +23,26 @@ int measure_children(PWR_Obj o)
   inite = 0;
   if(PWR_ObjAttrIsValid(o,PWR_ATTR_ENERGY)==PWR_RET_SUCCESS)
   {
-    int r = PWR_ObjAttrSetValue( self, PWR_ATTR_ENERGY, &inite);
+    int r;
+    //PWR_ObjAttrSetValue( self, PWR_ATTR_ENERGY, &inite);
     r = PWR_ObjAttrGetValue( self, PWR_ATTR_ENERGY, &value, &ts );
     char buffer[1000];
     char name[100];
     PWR_ObjGetName( o, name, 100 );
     sprintf(buffer,"%f joules, %lu ms, %s\n",	value, ms_now(), name);
     write_data(buffer,"ENERGY");
+  }
+  if(PWR_ObjAttrIsValid(o,PWR_ATTR_POWER)==PWR_RET_SUCCESS)
+  {
+    int r;
+    //PWR_ObjAttrSetValue( self, PWR_ATTR_POWER, &inite);
+    r = PWR_ObjAttrGetValue( self, PWR_ATTR_POWER, &value, &ts );
+    char buffer[1000];
+    char name[100];
+    PWR_ObjGetName( o, name, 100 );
+    sprintf(buffer,"%f watts, %lu ms, %s\n",	value, ms_now(), name);
+    write_data(buffer,"POWER");
+
   }
 
   PWR_ObjType objType;

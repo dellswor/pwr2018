@@ -47,10 +47,10 @@
 /* #undef HAVE_POWERINSIGHT */
 
 /* Set to 1 if Python was found */
-#define HAVE_PYTHON 1
+/* #undef HAVE_PYTHON */
 
 /* Define to 1 if you have the <Python.h> header file. */
-#define HAVE_PYTHON_H 1
+/* #undef HAVE_PYTHON_H */
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1

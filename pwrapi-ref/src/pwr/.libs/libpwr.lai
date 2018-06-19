@@ -17,7 +17,7 @@ old_library='libpwr.a'
 inherited_linker_flags=''
 
 # Libraries that this one depends upon.
-dependency_libs=' -L/usr/include/hwloc/lib -L/usr/lib/python2.7/config-x86_64-linux-gnu -L/usr/lib -lpython2.7 -lpthread -lutil /home/kona/research2018/pwrGIT/lib/libtinyxml2.la -lhwloc -ldl'
+dependency_libs=' -L/usr/include/hwloc/lib /home/kona/pwr2018/pwrlib-install/lib/libtinyxml2.la -lhwloc -ldl'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/home/kona/research2018/pwrGIT/lib'
+libdir='/home/kona/pwr2018/pwrlib-install/lib'

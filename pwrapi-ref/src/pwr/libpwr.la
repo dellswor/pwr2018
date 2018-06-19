@@ -17,7 +17,7 @@ old_library='libpwr.a'
 inherited_linker_flags=''
 
 # Libraries that this one depends upon.
-dependency_libs=' -L/usr/include/hwloc/lib -L/usr/lib/python2.7/config-x86_64-linux-gnu -L/usr/lib -lpython2.7 -lpthread -lutil /home/kona/research2018/pwrapi-ref/src/tinyxml2/libtinyxml2.la -lhwloc -ldl'
+dependency_libs=' -L/usr/include/hwloc/lib /home/kona/pwr2018/pwrapi-ref/src/tinyxml2/libtinyxml2.la -lhwloc -ldl'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
@@ -38,5 +38,5 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/home/kona/research2018/pwrGIT/lib'
-relink_command="(cd /home/kona/research2018/pwrapi-ref/src/pwr; /bin/bash \"/home/kona/research2018/pwrapi-ref/libtool\"  --tag CXX --mode=relink g++ -g -O2 -version-info 1:0:1 -L/usr/include/hwloc/lib -L/usr/lib/python2.7/config-x86_64-linux-gnu -L/usr/lib -lpython2.7 -lpthread -ldl -lutil -lm -Xlinker -export-dynamic -Wl,-O1 -Wl,-Bsymbolic-functions -o libpwr.la -rpath /home/kona/research2018/pwrGIT/lib libpwr_la-debug.lo libpwr_la-pwr.lo libpwr_la-cntxt.lo libpwr_la-object.lo libpwr_la-xmlConfig.lo libpwr_la-deviceStat.lo libpwr_la-distCntxt.lo libpwr_la-distComm.lo libpwr_la-distRequest.lo libpwr_la-distObject.lo libpwr_la-eventChannel.lo libpwr_la-tcpEventChannel.lo libpwr_la-allocEvent.lo libpwr_la-distGroup.lo libpwr_la-distGrpComm.lo libpwr_la-hwlocConfig.lo libpwr_la-pyConfig.lo libpwr_la-dynamic.lo ../../src/tinyxml2/libtinyxml2.la -lhwloc -ldl @inst_prefix_dir@)"
+libdir='/home/kona/pwr2018/pwrlib-install/lib'
+relink_command="(cd /home/kona/pwr2018/pwrapi-ref/src/pwr; /bin/bash \"/home/kona/pwr2018/pwrapi-ref/libtool\"  --tag CXX --mode=relink g++ -g -O2 -version-info 1:0:1 -L/usr/include/hwloc/lib -o libpwr.la -rpath /home/kona/pwr2018/pwrlib-install/lib libpwr_la-debug.lo libpwr_la-pwr.lo libpwr_la-cntxt.lo libpwr_la-object.lo libpwr_la-xmlConfig.lo libpwr_la-deviceStat.lo libpwr_la-distCntxt.lo libpwr_la-distComm.lo libpwr_la-distRequest.lo libpwr_la-distObject.lo libpwr_la-eventChannel.lo libpwr_la-tcpEventChannel.lo libpwr_la-allocEvent.lo libpwr_la-distGroup.lo libpwr_la-distGrpComm.lo libpwr_la-hwlocConfig.lo libpwr_la-dynamic.lo ../../src/tinyxml2/libtinyxml2.la -lhwloc -ldl @inst_prefix_dir@)"

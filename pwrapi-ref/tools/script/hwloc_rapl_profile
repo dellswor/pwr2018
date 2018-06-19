@@ -11,7 +11,7 @@
 # distribution.
 #
 
-prefix=/home/kona/research2018/pwrGIT
+prefix=/home/kona/pwr2018/pwrlib-install
 
 export LD_LIBRARY_PATH="${prefix}/lib:${LD_LIBRARY_PATH}"
 export DYLD_LIBRARY_PATH="${prefix}/lib:${DYLD_LIBRARY_PATH}"

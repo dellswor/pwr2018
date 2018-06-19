@@ -23,6 +23,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <math.h>
+#include <errno.h>
 #ifndef USE_SYSTIME
 #include <sys/time.h>
 #endif
@@ -34,6 +35,7 @@
 #define CPU_MODEL_HASWELL      60
 #define CPU_MODEL_HASWELL_EP   63
 #define CPU_MODEL_BROADWELL    61
+#define CPU_MODEL_KABY         142
 
 #define MSR_RAPL_POWER_UNIT    0x606
 
@@ -227,6 +229,7 @@ static int rapldev_identify( int *cpu_model )
                 case CPU_MODEL_IVY:
                 case CPU_MODEL_IVY_EP:
                 case CPU_MODEL_HASWELL:
+		case CPU_MODEL_KABY:
                     break;
                 default:
                     fprintf( stderr, "Warning: Unsupported model %d\n", *cpu_model );
@@ -385,7 +388,7 @@ static pwr_rapldev_t *_pwr_rapldev_init( int core )
 
     sprintf( file, "/dev/cpu/%d/msr", core );
     if( (dev->fd=open( file, O_RDONLY )) < 0 ) {
-        fprintf( stderr, "Error: PWR RAPL device open failed\n" );
+        fprintf( stderr, "Error: PWR RAPL device open failed. errno is %s. and path is %s\n",strerror(errno),file );
         return 0x0;
     }
 
