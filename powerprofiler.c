@@ -28,7 +28,7 @@ int measure_children(PWR_Obj o)
 		int r;
 		r = PWR_ObjAttrGetValue( self, PWR_ATTR_ENERGY, &value, &ts );
 		char name[100];
-		uint64_t osid;
+		uint64_t osid=777;
 		PWR_ObjAttrGetValue(self, PWR_ATTR_OS_ID, &osid, &ts);
 		PWR_ObjGetName( o, name, 100 );
 		fprintf(powerlogfile,"ENERGY, %f joules, %lu ms, %s, %"PRIu64"\n", value, ms_now(), name, osid);
