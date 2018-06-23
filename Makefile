@@ -1,5 +1,5 @@
 CC = mpicc
-LIBPWR_PATH = /home/kona/pwr2018/pwrlib-install
+LIBPWR_PATH =/home/nfs/kona/pwr2018/pwrlib-install
 
 all: profiler
 clean:

@@ -79,7 +79,7 @@ void *power_measurement(void *arg)
 	}
 
 	// Get a context
-	rc = PWR_CntxtInit( PWR_CNTXT_DEFAULT, PWR_ROLE_APP, "App", &cntxt );
+	rc = PWR_CntxtInit( PWR_CNTXT_VENDOR, PWR_ROLE_MC, "Monitor", &cntxt );
 	rc = PWR_CntxtGetEntryPoint( cntxt, &self );
 
 	while(monitoring)
