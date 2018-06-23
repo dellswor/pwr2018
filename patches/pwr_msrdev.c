@@ -10,10 +10,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/types.h>
-
 #include <msr_core.h>
 #include <msr_rapl.h>
-
+#include "pwr_msrdev.h"
 typedef struct {
 	int fd;
 
@@ -30,6 +29,7 @@ typedef struct {
 	pwr_msrdev_t *dev;
 } pwr_msrfd_t;
 #define PWR_MSRFD(X) ((pwr_msrfd_t *)(X))
+
 
 static plugin_devops_t devops = {
 	.open         = pwr_msrdev_open,
@@ -49,31 +49,33 @@ static plugin_devops_t devops = {
 	.private_data = 0x0
 };
 
+
 static struct rapl_data *rdat;
 static uint64_t *rflags;
 plugin_devops_t *pwr_msrdev_init( const char *initstr )
 {
+printf("msrdev_init\n");
 	int i;
 
 	plugin_devops_t *dev = malloc( sizeof(plugin_devops_t) );
 	private_data_t* priv = dev->private_data = malloc( sizeof(private_data_t) );
-
 	priv->numPkgs = 0;
 
 	init_msr();
 	rapl_init(&rdat, &rflags);
 
-	DBGP("num packages %d\n", priv->numPkgs );
-	assert( priv->numPkgs > 0 );
+	//DBGP("num packages %d\n", priv->numPkgs );
+	//assert( priv->numPkgs > 0 );
 
 	*dev = devops;
 	dev->private_data = priv;
+printf("init finished\n");
 	return dev;
 }
 
 int pwr_msrdev_final( plugin_devops_t *dev )
 {
-    DBGP( "Info: PWR RAPL device close\n" );
+    //DBGP( "Info: PWR RAPL device close\n" );
 
     private_data_t* priv = dev->private_data;  
     int i;
@@ -88,6 +90,7 @@ int pwr_msrdev_final( plugin_devops_t *dev )
 }
 pwr_fd_t pwr_msrdev_open( plugin_devops_t *dev, const char *openstr )
 {
+printf("msr opened\n");
 	private_data_t *info = (private_data_t*) dev->private_data;
 	pwr_msrfd_t *fd = malloc( sizeof(pwr_msrfd_t) );
 
@@ -197,3 +200,78 @@ static plugin_dev_t dev = {
 	.init   = pwr_msrdev_init,
 	.final  = pwr_msrdev_final,
 };
+
+plugin_dev_t* getDev() {
+    return &dev;
+}
+
+static int msrdev_numObjs( )
+{
+    DBGP("\n");
+    return 2;
+}
+static int msrdev_readObjs(  int i, PWR_ObjType* ptr )
+{
+    DBGP("\n");
+    ptr[0] = PWR_OBJ_SOCKET;
+    //ptr[1] = PWR_OBJ_MEM;
+    return 0;
+}
+
+static int msrdev_numAttrs( )
+{
+    DBGP("\n");
+    return 1;
+}
+
+static int msrdev_readAttrs( int i, PWR_AttrName* ptr )
+{
+    DBGP("\n");
+    ptr[0] = PWR_ATTR_ENERGY;
+    return 0;
+}
+
+static int msrdev_getDevName(PWR_ObjType type, size_t len, char* buf )
+{
+    strncpy(buf,"rapl_dev0", len );
+    DBGP("type=%d name=`%s`\n",type,buf);
+    return 0;
+}
+
+static int msrdev_getDevOpenStr(PWR_ObjType type,
+                        int global_index, size_t len, char* buf )
+{
+    snprintf( buf, len, "%d %d", type, global_index);
+    DBGP("type=%d global_index=%d str=`%s`\n",type,global_index,buf);
+    return 0;
+}
+
+static int msrdev_getDevInitStr( const char* name,
+                        size_t len, char* buf )
+{
+    snprintf(buf,len,"");
+    DBGP("dev=`%s` str=`%s`\n",name, buf );
+    return 0;
+}
+
+static int msrdev_getPluginName( size_t len, char* buf )
+{
+    snprintf(buf,len,"RAPL");
+    return 0;
+}
+
+static plugin_meta_t meta = {
+    .numObjs = msrdev_numObjs,
+    .numAttrs = msrdev_numAttrs,
+    .readObjs = msrdev_readObjs,
+    .readAttrs = msrdev_readAttrs,
+    .getDevName = msrdev_getDevName,
+    .getDevOpenStr = msrdev_getDevOpenStr,
+    .getDevInitStr = msrdev_getDevInitStr,
+    .getPluginName = msrdev_getPluginName,
+};
+
+plugin_meta_t* getMeta() {
+    return &meta;
+}
+
