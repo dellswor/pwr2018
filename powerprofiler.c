@@ -28,16 +28,7 @@ int measure_children(PWR_Obj o)
 	inite = 0;
 	if(PWR_ObjAttrIsValid(o,PWR_ATTR_ENERGY)==PWR_RET_SUCCESS)
 	{
-		static struct rapl_limit rlim[2];
-    rlim[0].watts = 10;
-    rlim[1].watts = 12;
-    rlim[0].bits = 0;
-    rlim[1].bits = 0;
-    rlim[0].seconds = 0.1;
-    rlim[1].seconds = 0.1;
-		PWR_ObjAttrSetValue( self, PWR_ATTR_POWER, rlim );
-		int r;
-		r = PWR_ObjAttrGetValue( self, PWR_ATTR_ENERGY, &value, &ts );
+		PWR_ObjAttrGetValue( self, PWR_ATTR_ENERGY, &value, &ts );
 		char name[100];
 		uint64_t osid=777;
 		PWR_ObjAttrGetValue(self, PWR_ATTR_OS_ID, &osid, &ts);
@@ -77,7 +68,7 @@ int measure_energy()
 }
 void *power_measurement(void *arg)
 {
-	
+
 	powerlogfd=open("power.dat",O_WRONLY|O_CREAT|O_NDELAY, S_IRUSR|S_IWUSR);
 	if(powerlogfd<0)
 	{
@@ -92,9 +83,35 @@ void *power_measurement(void *arg)
 	// Get a context
 	rc = PWR_CntxtInit( PWR_CNTXT_VENDOR, PWR_ROLE_MC, "Monitor", &cntxt );
 	rc = PWR_CntxtGetEntryPoint( cntxt, &self );
+	static struct rapl_limit rlim[2];
+	rlim[0].watts = 30;
+	rlim[1].watts = 30;
+	rlim[0].bits = 0;
+	rlim[1].bits = 0;
+	rlim[0].seconds = 1;
+	rlim[1].seconds = 1;
+	int r;
+	PWR_ObjType objType;
+	PWR_ObjGetType( self, &objType );
+	//set self to highest level in hierarchy
+	while(objType!=PWR_OBJ_PLATFORM)
+	{
+		PWR_ObjGetParent( self, &self );
+		PWR_ObjGetType( self, &objType );
+	}
+	/*
+	   while(objType!=PWR_OBJ_NODE)
+	   {
+	   PWR_ObjGetParent( self, &self );
+	   PWR_ObjGetType( self, &objType );
+	   }
+	 */
+	PWR_ObjAttrSetValue( self,PWR_ATTR_POWER_LIMIT_MAX, rlim );
+
 
 	while(monitoring)
 	{
+
 		measure_energy();
 		sleep_abs(INTERVAL_NANO);
 	}
