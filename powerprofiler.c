@@ -5,6 +5,9 @@
 #include <unistd.h>
 #include <inttypes.h>
 
+#include <msr_core.h>
+#include <msr_rapl.h>
+
 #define INTERVAL_SEC 0
 #define INTERVAL_NANO 100000000
 
@@ -25,6 +28,14 @@ int measure_children(PWR_Obj o)
 	inite = 0;
 	if(PWR_ObjAttrIsValid(o,PWR_ATTR_ENERGY)==PWR_RET_SUCCESS)
 	{
+		static struct rapl_limit rlim[2];
+    rlim[0].watts = 10;
+    rlim[1].watts = 12;
+    rlim[0].bits = 0;
+    rlim[1].bits = 0;
+    rlim[0].seconds = 0.1;
+    rlim[1].seconds = 0.1;
+		PWR_ObjAttrSetValue( self, PWR_ATTR_POWER, rlim );
 		int r;
 		r = PWR_ObjAttrGetValue( self, PWR_ATTR_ENERGY, &value, &ts );
 		char name[100];

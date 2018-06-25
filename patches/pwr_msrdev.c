@@ -54,7 +54,7 @@ static struct rapl_data *rdat;
 static uint64_t *rflags;
 plugin_devops_t *pwr_msrdev_init( const char *initstr )
 {
-printf("msrdev_init\n");
+	printf("msrdev_init\n");
 	int i;
 
 	plugin_devops_t *dev = malloc( sizeof(plugin_devops_t) );
@@ -69,28 +69,28 @@ printf("msrdev_init\n");
 
 	*dev = devops;
 	dev->private_data = priv;
-printf("init finished\n");
+	printf("init finished\n");
 	return dev;
 }
 
 int pwr_msrdev_final( plugin_devops_t *dev )
 {
-    //DBGP( "Info: PWR RAPL device close\n" );
+	//DBGP( "Info: PWR RAPL device close\n" );
 
-    private_data_t* priv = dev->private_data;  
-    int i;
-    for ( i = 0; i < priv->numPkgs; i++) {
+	private_data_t* priv = dev->private_data;  
+	int i;
+	for ( i = 0; i < priv->numPkgs; i++) {
 
-	free( priv->pkgs[i] );	
-    } 
-    free( dev->private_data );
-    free( dev );
+		free( priv->pkgs[i] );	
+	} 
+	free( dev->private_data );
+	free( dev );
 
-    return 0;
+	return 0;
 }
 pwr_fd_t pwr_msrdev_open( plugin_devops_t *dev, const char *openstr )
 {
-printf("msr opened\n");
+	printf("msr opened\n");
 	private_data_t *info = (private_data_t*) dev->private_data;
 	pwr_msrfd_t *fd = malloc( sizeof(pwr_msrfd_t) );
 
@@ -102,7 +102,7 @@ printf("msr opened\n");
 	DBGP("type=%d global_index=%d\n",type,global_index);
 
 
-	assert( global_index < info->numPkgs );
+	//	assert( global_index < info->numPkgs );
 
 	fd->dev = info->pkgs[global_index ];
 
@@ -133,7 +133,11 @@ int pwr_msrdev_read( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int l
 		return -1;
 	}
 	poll_rapl_data();
-	energy = rdat->pkg_delta_joules[0];
+	int sockets = num_sockets();
+	for(int s = 0; s<sockets; s++)
+	{
+		energy += rdat->pkg_delta_joules[s];
+	}
 
 	switch( attr ) {
 		case PWR_ATTR_ENERGY:
@@ -157,7 +161,19 @@ int pwr_msrdev_read( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int l
 }
 int pwr_msrdev_write( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int len )
 {
-	return 0;
+	if(attr==PWR_ATTR_POWER)
+	{
+		int sockets = num_sockets();
+		for(int s = 0; s<sockets; s++)
+		{
+			set_pkg_rapl_limit(s, &(value[0]), &(value[1]));
+		}
+		return PWR_RET_SUCCESS;
+	}
+	else
+	{
+		return PWR_RET_FAILURE;
+	}
 }
 
 int pwr_msrdev_readv( pwr_fd_t fd, unsigned int arraysize,
@@ -202,76 +218,76 @@ static plugin_dev_t dev = {
 };
 
 plugin_dev_t* getDev() {
-    return &dev;
+	return &dev;
 }
 
 static int msrdev_numObjs( )
 {
-    DBGP("\n");
-    return 2;
+	DBGP("\n");
+	return 2;
 }
 static int msrdev_readObjs(  int i, PWR_ObjType* ptr )
 {
-    DBGP("\n");
-    ptr[0] = PWR_OBJ_SOCKET;
-    //ptr[1] = PWR_OBJ_MEM;
-    return 0;
+	DBGP("\n");
+	ptr[0] = PWR_OBJ_SOCKET;
+	//ptr[1] = PWR_OBJ_MEM;
+	return 0;
 }
 
 static int msrdev_numAttrs( )
 {
-    DBGP("\n");
-    return 1;
+	DBGP("\n");
+	return 1;
 }
 
 static int msrdev_readAttrs( int i, PWR_AttrName* ptr )
 {
-    DBGP("\n");
-    ptr[0] = PWR_ATTR_ENERGY;
-    return 0;
+	DBGP("\n");
+	ptr[0] = PWR_ATTR_ENERGY;
+	return 0;
 }
 
 static int msrdev_getDevName(PWR_ObjType type, size_t len, char* buf )
 {
-    strncpy(buf,"rapl_dev0", len );
-    DBGP("type=%d name=`%s`\n",type,buf);
-    return 0;
+	strncpy(buf,"rapl_dev0", len );
+	DBGP("type=%d name=`%s`\n",type,buf);
+	return 0;
 }
 
 static int msrdev_getDevOpenStr(PWR_ObjType type,
-                        int global_index, size_t len, char* buf )
+		int global_index, size_t len, char* buf )
 {
-    snprintf( buf, len, "%d %d", type, global_index);
-    DBGP("type=%d global_index=%d str=`%s`\n",type,global_index,buf);
-    return 0;
+	snprintf( buf, len, "%d %d", type, global_index);
+	DBGP("type=%d global_index=%d str=`%s`\n",type,global_index,buf);
+	return 0;
 }
 
 static int msrdev_getDevInitStr( const char* name,
-                        size_t len, char* buf )
+		size_t len, char* buf )
 {
-    snprintf(buf,len,"");
-    DBGP("dev=`%s` str=`%s`\n",name, buf );
-    return 0;
+	snprintf(buf,len,"");
+	DBGP("dev=`%s` str=`%s`\n",name, buf );
+	return 0;
 }
 
 static int msrdev_getPluginName( size_t len, char* buf )
 {
-    snprintf(buf,len,"RAPL");
-    return 0;
+	snprintf(buf,len,"RAPL");
+	return 0;
 }
 
 static plugin_meta_t meta = {
-    .numObjs = msrdev_numObjs,
-    .numAttrs = msrdev_numAttrs,
-    .readObjs = msrdev_readObjs,
-    .readAttrs = msrdev_readAttrs,
-    .getDevName = msrdev_getDevName,
-    .getDevOpenStr = msrdev_getDevOpenStr,
-    .getDevInitStr = msrdev_getDevInitStr,
-    .getPluginName = msrdev_getPluginName,
+	.numObjs = msrdev_numObjs,
+	.numAttrs = msrdev_numAttrs,
+	.readObjs = msrdev_readObjs,
+	.readAttrs = msrdev_readAttrs,
+	.getDevName = msrdev_getDevName,
+	.getDevOpenStr = msrdev_getDevOpenStr,
+	.getDevInitStr = msrdev_getDevInitStr,
+	.getPluginName = msrdev_getPluginName,
 };
 
 plugin_meta_t* getMeta() {
-    return &meta;
+	return &meta;
 }
 
