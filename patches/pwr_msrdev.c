@@ -46,24 +46,24 @@ static struct rapl_data *rdat;
 static uint64_t *rflags;
 plugin_devops_t *pwr_msrdev_init( const char *initstr )
 {
-	printf("msrdev_init\n");
+	//printf("msrdev_init\n");
 	int i;
 
 	plugin_devops_t *dev = malloc( sizeof(plugin_devops_t) );
 	
 	init_msr();
 	rapl_init(&rdat, &rflags);
-	printf("msr inited\n");
+	//printf("msr inited\n");
 
 	//DBGP("num packages %d\n", priv->numPkgs );
 	//assert( priv->numPkgs > 0 );
 
 	*dev = devops;
-	printf("set equaled to devops\n");
+	//printf("set equaled to devops\n");
 	dev->private_data = malloc( sizeof(pwr_msrdev_t) );
-	printf("malloced\n");
+	//printf("malloced\n");
 	bzero( dev->private_data, sizeof(pwr_msrdev_t) );
-	printf("init finished\n");
+	//printf("init finished\n");
 	return dev;
 }
 
@@ -76,7 +76,7 @@ int pwr_msrdev_final( plugin_devops_t *dev )
 }
 pwr_fd_t pwr_msrdev_open( plugin_devops_t *dev, const char *openstr )
 {
-	printf("msr opened\n");
+	//printf("msr opened\n");
 	pwr_msrfd_t *fd = malloc( sizeof(pwr_msrfd_t) );
 	PWR_MSRFD(fd)->dev =(pwr_msrdev_t *)(dev->private_data);
 	PWR_MSRFD(fd)->dev->energy = 0.0;
@@ -101,7 +101,7 @@ int pwr_msrdev_read( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int l
 #endif
 energy=PWR_MSRFD(fd)->dev->energy;
 	DBGP( "Info: PWR RAPL device read\n" );
-printf("energy from fd is %lf\n",energy);
+//printf("energy from fd is %lf\n",energy);
 	if( len != sizeof(double) ) {
 		fprintf( stderr, "Error: value field size of %u incorrect, should be %ld\n", len, sizeof(double) );
 		return -1;
@@ -136,13 +136,14 @@ PWR_MSRFD(fd)->dev->energy=energy;
 int pwr_msrdev_write( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int len )
 {
 
-	printf("msrdev_write called\n");
+	//printf("msrdev_write called\n");
 	if(attr==PWR_ATTR_POWER_LIMIT_MAX)
 	{
 		int sockets = num_sockets();
 		for(int s = 0; s<sockets; s++)
 		{
-			set_pkg_rapl_limit(s, &(value[0]), &(value[1]));
+			printf("sockets i %i\n",s);
+			set_pkg_rapl_limit(s,value, value);
 		}
 		return PWR_RET_SUCCESS;
 	}

@@ -44,11 +44,11 @@ int measure_children(PWR_Obj o)
 		PWR_Grp children;
 		PWR_ObjGetChildren( o, &children );
 		int childrenNum = PWR_GrpGetNumObjs(children);
-		printf("children loop childrenNum is %i\n", childrenNum);
+		//printf("children loop childrenNum is %i\n", childrenNum);
 		for (int i = 0; i < childrenNum; i++ ) {
 			PWR_Obj child;
 			PWR_GrpGetObjByIndx( children, i, &child );
-			printf("i is %i\n",i);
+			//printf("i is %i\n",i);
 			measure_children(child);
 		}
 		//return 1;
@@ -85,13 +85,12 @@ void *power_measurement(void *arg)
 	// Get a context
 	rc = PWR_CntxtInit( PWR_CNTXT_VENDOR, PWR_ROLE_MC, "Monitor", &cntxt );
 	rc = PWR_CntxtGetEntryPoint( cntxt, &self );
-	static struct rapl_limit rlim[2];
-	rlim[0].watts = 10;
-	rlim[1].watts = 10;
-	rlim[0].bits = 0;
-	rlim[1].bits = 0;
-	rlim[0].seconds = 1;
-	rlim[1].seconds = 1;
+	static struct rapl_limit rlim;
+	
+	
+	rlim.watts = 100;
+	rlim.bits = 0;
+	rlim.seconds = 1;
 	int r;
 	PWR_ObjType objType;
 	PWR_ObjGetType( self, &objType );
@@ -106,7 +105,7 @@ void *power_measurement(void *arg)
 	PWR_Obj child;
 	PWR_GrpGetObjByIndx( children, 0, &child );
 
-	PWR_ObjAttrSetValue( child,PWR_ATTR_POWER_LIMIT_MAX, rlim );
+	PWR_ObjAttrSetValue( child,PWR_ATTR_POWER_LIMIT_MAX, &rlim );
 
 
 	while(monitoring)
