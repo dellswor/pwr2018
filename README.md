@@ -9,6 +9,6 @@ Dependencies:
 
 Kernel Req.: MSR-SAFE
 
-source /$(PATH_TO_PWRLIB)/script/hwloc_rapl_profile
+source /$(PATH_TO_PWRLIB)/script/hwloc_msr_profile
 
-LD_PRELOAD=/$(PATH_TO_PROFILER)/profiler.so mpirun --allow-run-as-root *commands*
+export LD_PRELOAD=/$(PATH_TO_PROFILER)/profiler.so
