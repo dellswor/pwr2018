@@ -11,6 +11,9 @@ Tools for the 2018 power work
 
 ### Instruction
 * link LIBMSR and PowerAPI and MPI against this
+
+To run it:
+
 ```
 source /$(PATH_TO_PWRLIB)/script/hwloc_msr_profile
 export LD_PRELOAD=/$(PATH_TO_PROFILER)/profiler.so
