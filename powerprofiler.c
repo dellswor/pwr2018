@@ -70,8 +70,11 @@ int measure_energy()
 }
 void *power_measurement(void *arg)
 {
+	char name[30];
+	sprintf(name, "energy.%d.dat",nodeID);
 
-	powerlogfd=open("power.dat",O_WRONLY|O_CREAT|O_NDELAY, S_IRUSR|S_IWUSR);
+	powerlogfd=open(name,O_WRONLY|O_CREAT|O_NDELAY, S_IRUSR|S_IWUSR);
+
 	if(powerlogfd<0)
 	{
 		printf("failed to get file descriptor: %i, errno: %i\n",powerlogfd,errno);
@@ -86,8 +89,8 @@ void *power_measurement(void *arg)
 	rc = PWR_CntxtInit( PWR_CNTXT_VENDOR, PWR_ROLE_MC, "Monitor", &cntxt );
 	rc = PWR_CntxtGetEntryPoint( cntxt, &self );
 	static struct rapl_limit rlim;
-	
-	
+
+
 	rlim.watts = 100;
 	rlim.bits = 0;
 	rlim.seconds = 1;
