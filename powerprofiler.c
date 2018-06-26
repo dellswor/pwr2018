@@ -26,30 +26,32 @@ FILE *powerlogfile=NULL;
 int measure_children(PWR_Obj o)
 {
 	inite = 0;
-	if(PWR_ObjAttrIsValid(o,PWR_ATTR_ENERGY)==PWR_RET_SUCCESS)
-	{
-		PWR_ObjAttrGetValue( self, PWR_ATTR_ENERGY, &value, &ts );
-		char name[100];
-		uint64_t osid=777;
-		PWR_ObjAttrGetValue(self, PWR_ATTR_OS_ID, &osid, &ts);
-		PWR_ObjGetName( o, name, 100 );
-		fprintf(powerlogfile,"ENERGY, %f joules, %lu ms, %s, %"PRIu64"\n", value, ms_now(), name, osid);
-	}
+
+	PWR_ObjAttrGetValue( self, PWR_ATTR_ENERGY, &value, &ts );
+	char name[100];
+	PWR_ObjGetName( o, name, 100 );
+	fprintf(powerlogfile,"ENERGY, %f joules, %lu ms, %s\n", value, ms_now(), name);
+
 
 	PWR_ObjType objType;
 	PWR_ObjGetType( o, &objType );
-	if(objType==PWR_OBJ_CORE)
+	if(objType==PWR_OBJ_NODE)
+	{
 		return 0;
+	}
 	else
 	{
 		PWR_Grp children;
 		PWR_ObjGetChildren( o, &children );
-		for (int i = 0; i < PWR_GrpGetNumObjs(children); i++ ) {
+		int childrenNum = PWR_GrpGetNumObjs(children);
+		printf("children loop childrenNum is %i\n", childrenNum);
+		for (int i = 0; i < childrenNum; i++ ) {
 			PWR_Obj child;
 			PWR_GrpGetObjByIndx( children, i, &child );
-			return measure_children(child);
+			printf("i is %i\n",i);
+			measure_children(child);
 		}
-		return 1;
+		//return 1;
 	}
 }
 int measure_energy()
@@ -84,8 +86,8 @@ void *power_measurement(void *arg)
 	rc = PWR_CntxtInit( PWR_CNTXT_VENDOR, PWR_ROLE_MC, "Monitor", &cntxt );
 	rc = PWR_CntxtGetEntryPoint( cntxt, &self );
 	static struct rapl_limit rlim[2];
-	rlim[0].watts = 30;
-	rlim[1].watts = 30;
+	rlim[0].watts = 10;
+	rlim[1].watts = 10;
 	rlim[0].bits = 0;
 	rlim[1].bits = 0;
 	rlim[0].seconds = 1;
@@ -99,14 +101,12 @@ void *power_measurement(void *arg)
 		PWR_ObjGetParent( self, &self );
 		PWR_ObjGetType( self, &objType );
 	}
-	/*
-	   while(objType!=PWR_OBJ_NODE)
-	   {
-	   PWR_ObjGetParent( self, &self );
-	   PWR_ObjGetType( self, &objType );
-	   }
-	 */
-	PWR_ObjAttrSetValue( self,PWR_ATTR_POWER_LIMIT_MAX, rlim );
+	PWR_Grp children;
+	PWR_ObjGetChildren( self, &children );
+	PWR_Obj child;
+	PWR_GrpGetObjByIndx( children, 0, &child );
+
+	PWR_ObjAttrSetValue( child,PWR_ATTR_POWER_LIMIT_MAX, rlim );
 
 
 	while(monitoring)

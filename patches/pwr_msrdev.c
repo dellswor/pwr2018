@@ -15,6 +15,7 @@
 #include "pwr_msrdev.h"
 typedef struct {
 	int fd;
+	double energy;
 } pwr_msrdev_t;
 typedef struct {
 	pwr_msrdev_t *dev;
@@ -78,8 +79,7 @@ pwr_fd_t pwr_msrdev_open( plugin_devops_t *dev, const char *openstr )
 	printf("msr opened\n");
 	pwr_msrfd_t *fd = malloc( sizeof(pwr_msrfd_t) );
 	PWR_MSRFD(fd)->dev =(pwr_msrdev_t *)(dev->private_data);
-	printf("msr has done opening\n"); 
-
+	PWR_MSRFD(fd)->dev->energy = 0.0;
 	return fd;
 }
 int pwr_msrdev_close( pwr_fd_t fd )
@@ -99,9 +99,9 @@ int pwr_msrdev_read( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int l
 #ifndef USE_SYSTIME
 	struct timeval tv;
 #endif
-
+energy=PWR_MSRFD(fd)->dev->energy;
 	DBGP( "Info: PWR RAPL device read\n" );
-
+printf("energy from fd is %lf\n",energy);
 	if( len != sizeof(double) ) {
 		fprintf( stderr, "Error: value field size of %u incorrect, should be %ld\n", len, sizeof(double) );
 		return -1;
@@ -122,7 +122,7 @@ int pwr_msrdev_read( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int l
 			break;
 	}
 
-
+PWR_MSRFD(fd)->dev->energy=energy;
 #ifndef USE_SYSTIME
 	gettimeofday( &tv, NULL );
 	*timestamp = tv.tv_sec*1000000000ULL + tv.tv_usec*1000;
@@ -205,7 +205,7 @@ static int msrdev_numObjs( )
 static int msrdev_readObjs(  int i, PWR_ObjType* ptr )
 {
 	DBGP("\n");
-	ptr[0] = PWR_OBJ_SOCKET;
+	ptr[0] = PWR_OBJ_NODE;
 	return 0;
 }
 
@@ -225,7 +225,7 @@ static int msrdev_readAttrs( int i, PWR_AttrName* ptr )
 
 static int msrdev_getDevName(PWR_ObjType type, size_t len, char* buf )
 {
-	strncpy(buf,"rapl_dev0", len );
+	strncpy(buf,"pwr_msr_dev0", len );
 	DBGP("type=%d name=`%s`\n",type,buf);
 	return 0;
 }
