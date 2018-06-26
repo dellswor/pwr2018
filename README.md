@@ -11,6 +11,7 @@ Tools for the 2018 power work
 
 ### Instruction
 * link LIBMSR and PowerAPI and MPI against this
+* Add plugin patch to PowerAPI and edit Makefile.am to include them
 
 To run it:
 
