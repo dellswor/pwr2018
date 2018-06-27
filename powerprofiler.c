@@ -72,7 +72,7 @@ int measure_energy()
 void *power_measurement(void *arg)
 {
 	char name[30];
-	sprintf(name, "data_output/%s/energy.%d.dat",config[0],nodeID);
+	sprintf(name, "%s/energy.%d.dat",config[0],nodeID);
 	powerlogfd=open(name,O_WRONLY|O_CREAT|O_NDELAY, S_IRUSR|S_IWUSR);
 
 	if(powerlogfd<0)
