@@ -1,8 +1,22 @@
 # pwr2018
 Tools for the 2018 power work
 
-modprobe msr
+### Dependencies
+* LIBMSR https://github.com/LLNL/libmsr/
+* PowerAPI https://github.com/pwrapi/pwrapi-ref
+* MPI
 
-source /$(PATH_TO_PWRLIB)/script/hwloc_rapl_profile
+### Kernel Req.
+* MSR-SAFE
 
-LD_PRELOAD=/$(PATH_TO_PROFILER)/profiler.so mpirun --allow-run-as-root *commands*
+### Instruction
+* link LIBMSR and PowerAPI and MPI against this
+* Add plugin patch to PowerAPI and edit Makefile.am to include them
+
+To run it:
+
+```
+source /$(PATH_TO_PWRLIB)/script/hwloc_msr_profile
+export LD_PRELOAD=/$(PATH_TO_PROFILER)/profiler.so
+srun *commands*
+```
