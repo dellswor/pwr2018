@@ -68,11 +68,11 @@ int measure_energy()
 	measure_children(self);
 	return 0;
 }
+
 void *power_measurement(void *arg)
 {
 	char name[30];
-	sprintf(name, "energy.%d.dat",nodeID);
-
+	sprintf(name, "data_output/%s/energy.%d.dat",config[0],nodeID);
 	powerlogfd=open(name,O_WRONLY|O_CREAT|O_NDELAY, S_IRUSR|S_IWUSR);
 
 	if(powerlogfd<0)
@@ -91,9 +91,9 @@ void *power_measurement(void *arg)
 	static struct rapl_limit rlim;
 
 
-	rlim.watts = 100;
+	rlim.watts = atof(config[1]);
 	rlim.bits = 0;
-	rlim.seconds = 1;
+	rlim.seconds = atof(config[2]);
 	int r;
 	PWR_ObjType objType;
 	PWR_ObjGetType( self, &objType );
@@ -115,7 +115,7 @@ void *power_measurement(void *arg)
 	{
 
 		measure_energy();
-		sleep_abs(INTERVAL_NANO);
+		sleep_abs(atoi(config[3]));
 	}
 	fclose(powerlogfile);
 	close(powerlogfd);

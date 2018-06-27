@@ -16,6 +16,7 @@ static int monitoring =0;
 int globalRank=-1;
 int localRank = -1;
 int nodeID = -1;
+static char config[10][100];
 #include "pwr.h"
 #include "time.c"
 #include "powerprofiler.c"
@@ -37,9 +38,29 @@ int init()
 	localRank = atoi(getenv("SLURM_LOCALID"));
 	char fname[100];
 	nodeID=globalRank-localRank;
-	sprintf(fname, "functions.%d.%d.dat",localRank, nodeID);
+
+	FILE *configf = NULL; 
+	int i = 0;
+	int total = 0;
+
+	configf = fopen("profiler.config", "r");
+	while(fgets(config[i], 100, configf)) {
+		config[i][strlen(config[i]) - 1] = '\0';
+		i++;
+	}
+	printf("------------\n");
+	printf("Profiler Configuration\n");
+	printf("output path: %s\n",config[0]);
+	printf("powercap: %s watts\n",config[1]);
+	printf("time window: %s seconds\n",config[2]);
+	printf("monitoring frequency: %s nano seconds\n",config[3]);
+	printf("------------\n");
+	sprintf(fname, "%s/functions.%d.%d.dat",config[0],localRank, nodeID);
+	struct stat st;
+	if (stat(config[0], &st) == -1) {
+		mkdir(config[0], 0700);
+	}
 	if(localRank == 0 ) {
-		printf("I'm local rank 0!!!\n");
 		pthread_create(&powThread, NULL, power_measurement, NULL);
 
 	}
