@@ -142,8 +142,14 @@ int pwr_msrdev_write( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int 
 		int sockets = num_sockets();
 		for(int s = 0; s<sockets; s++)
 		{
-			printf("sockets i %i\n",s);
-			set_pkg_rapl_limit(s,value, value);
+			struct rapl_limit *rlimp = (struct rapl_limit *)value;
+			if(rlimp->watts == -1)
+			{
+				struct rapl_power_info raplinfo;
+        		        get_rapl_power_info(s, &raplinfo);
+		                rlimp->watts = raplinfo.pkg_therm_power;
+			}
+			set_pkg_rapl_limit(s,rlimp, rlimp);
 		}
 		return PWR_RET_SUCCESS;
 	}

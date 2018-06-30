@@ -12,7 +12,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
-static int monitoring =0;
+static int monitoring =1;
 int globalRank=-1;
 int localRank = -1;
 int nodeID = -1;
@@ -42,8 +42,6 @@ int init()
 
 	FILE *configf = NULL; 
 	int i = 0;
-	int total = 0;
-
 	configf = fopen("profiler.config", "r");
 	while(fgets(config[i], 100, configf)) {
 		config[i][strlen(config[i]) - 1] = '\0';
@@ -53,13 +51,36 @@ int init()
 		printf("------------\n");
 		printf("Profiler Configuration\n");
 		printf("output path: %s\n",config[0]);
-		printf("powercap: %s watts\n",config[1]);
+		if(atoi(config[1])==-1)
+		{
+			printf("powercap set to TDP of socket\n");
+		}
+		else
+		{
+			printf("powercap: %s watts\n",config[1]);
+		}
 		printf("time window: %s seconds\n",config[2]);
 		printf("monitoring frequency: %s nano seconds\n",config[3]);
 		printf("------------\n");
 	}
-	printf("my rank: %i\n",globalRank);
-	fflush(stdout);
+	if(atoi(config[1])==-1)
+	{
+		uint64_t *rflags;
+		struct rapl_data *rdat;
+		init_msr();
+		rapl_init(&rdat, &rflags);
+		poll_rapl_data();
+		for(int s=0; s<num_sockets(); s++)
+		{
+
+			struct rapl_power_info raplinfo;
+			get_rapl_power_info(s, &raplinfo);
+			double power_cap = raplinfo.pkg_therm_power;
+			printf("Rank %d: TDP for socket %d is %lfW\n",globalRank, s, power_cap);
+		}
+		printf("------------\n");
+	}
+
 	sprintf(fname, "%s/functions.%d.%d.dat",config[0],localRank, nodeID);
 	logfd=open(fname,O_WRONLY|O_CREAT|O_NDELAY, S_IRUSR|S_IWUSR);
 	if(logfd<0)
@@ -75,12 +96,13 @@ int init()
 		fflush(stdout);
 		exit(EXIT_FAILURE);
 	}
-	
-	fflush(stdout);
 	if(localRank == 0 ) {
-		pthread_create(&powThread, NULL, power_measurement, NULL);
+		if(pthread_create(&powThread, NULL, power_measurement, NULL)!=0)
+		{
+			printf("powerprofiler thread failed to start\n");
+			exit(EXIT_FAILURE);
+		}
 	}
-	fflush(stdout);
 	return 0;
 }
 int MPI_Init_thread(int *argc, char ***argv, int required, int *provided)
@@ -101,9 +123,23 @@ int MPI_Init(int *argc, char ***argv)
 int MPI_Finalize()
 {
 	int r;
-	//printf("rank %i has finalized\n",profrank);
 	monitoring=0;
-	//fprintf(logfile,"monitoring ends in finalize %lu\n", ms_now()/1000);
+	for(int i=0; i<num_sockets(); i++)
+	{
+		struct rapl_limit rlimg;
+		struct rapl_power_info raplinfo;
+		get_rapl_power_info(i, &raplinfo);
+		double tdp = raplinfo.pkg_therm_power;
+
+
+		get_pkg_rapl_limit(i, &rlimg, NULL);
+		printf("Rank %d: Resetting power limit back from %lf to %lf for socket %d\n",globalRank, rlimg.watts, tdp, i);
+		struct rapl_limit rlim;
+		rlim.watts = tdp;
+		rlim.seconds = 1;
+		rlim.bits = 0;
+		set_pkg_rapl_limit(i, &rlim,&rlim);
+	}
 	if(localRank==0)
 	{
 		pthread_join(powThread,NULL);
