@@ -50,7 +50,7 @@ plugin_devops_t *pwr_msrdev_init( const char *initstr )
 	int i;
 
 	plugin_devops_t *dev = malloc( sizeof(plugin_devops_t) );
-	
+
 	init_msr();
 	rapl_init(&rdat, &rflags);
 	//printf("msr inited\n");
@@ -99,9 +99,9 @@ int pwr_msrdev_read( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int l
 #ifndef USE_SYSTIME
 	struct timeval tv;
 #endif
-energy=PWR_MSRFD(fd)->dev->energy;
+	energy=PWR_MSRFD(fd)->dev->energy;
 	DBGP( "Info: PWR RAPL device read\n" );
-//printf("energy from fd is %lf\n",energy);
+	//printf("energy from fd is %lf\n",energy);
 	if( len != sizeof(double) ) {
 		fprintf( stderr, "Error: value field size of %u incorrect, should be %ld\n", len, sizeof(double) );
 		return -1;
@@ -122,7 +122,7 @@ energy=PWR_MSRFD(fd)->dev->energy;
 			break;
 	}
 
-PWR_MSRFD(fd)->dev->energy=energy;
+	PWR_MSRFD(fd)->dev->energy=energy;
 #ifndef USE_SYSTIME
 	gettimeofday( &tv, NULL );
 	*timestamp = tv.tv_sec*1000000000ULL + tv.tv_usec*1000;
@@ -139,17 +139,22 @@ int pwr_msrdev_write( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int 
 	//printf("msrdev_write called\n");
 	if(attr==PWR_ATTR_POWER_LIMIT_MAX)
 	{
+		struct rapl_limit *rlimp = (struct rapl_limit *)value;
+		double cap = rlimp->watts;
 		int sockets = num_sockets();
 		for(int s = 0; s<sockets; s++)
 		{
-			struct rapl_limit *rlimp = (struct rapl_limit *)value;
-			if(rlimp->watts == -1)
-			{
-				struct rapl_power_info raplinfo;
-        		        get_rapl_power_info(s, &raplinfo);
-		                rlimp->watts = raplinfo.pkg_therm_power;
-			}
+			if(cap == -1)
+        	        {
+        	                struct rapl_power_info raplinfo;
+        	                get_rapl_power_info(s, &raplinfo);
+        	                rlimp->watts = raplinfo.pkg_therm_power;
+				cap=rlimp->watts;
+	                }
 			set_pkg_rapl_limit(s,rlimp, rlimp);
+			struct rapl_limit rlimg;
+	                get_pkg_rapl_limit(s, &rlimg, NULL);
+	                printf("Power set to %lfW for socket %d\n", rlimg.watts, s);
 		}
 		return PWR_RET_SUCCESS;
 	}

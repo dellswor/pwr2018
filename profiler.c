@@ -63,24 +63,6 @@ int init()
 		printf("monitoring frequency: %s nano seconds\n",config[3]);
 		printf("------------\n");
 	}
-	if(atoi(config[1])==-1)
-	{
-		uint64_t *rflags;
-		struct rapl_data *rdat;
-		init_msr();
-		rapl_init(&rdat, &rflags);
-		poll_rapl_data();
-		for(int s=0; s<num_sockets(); s++)
-		{
-
-			struct rapl_power_info raplinfo;
-			get_rapl_power_info(s, &raplinfo);
-			double power_cap = raplinfo.pkg_therm_power;
-			printf("Rank %d: TDP for socket %d is %lfW\n",globalRank, s, power_cap);
-		}
-		printf("------------\n");
-	}
-
 	sprintf(fname, "%s/functions.%d.%d.dat",config[0],localRank, nodeID);
 	logfd=open(fname,O_WRONLY|O_CREAT|O_NDELAY, S_IRUSR|S_IWUSR);
 	if(logfd<0)
@@ -126,14 +108,10 @@ int MPI_Finalize()
 	monitoring=0;
 	for(int i=0; i<num_sockets(); i++)
 	{
-		struct rapl_limit rlimg;
 		struct rapl_power_info raplinfo;
 		get_rapl_power_info(i, &raplinfo);
 		double tdp = raplinfo.pkg_therm_power;
-
-
-		get_pkg_rapl_limit(i, &rlimg, NULL);
-		printf("Rank %d: Resetting power limit back from %lf to %lf for socket %d\n",globalRank, rlimg.watts, tdp, i);
+		printf("Rank %d: Resetting power limit to %lf for socket %d\n",globalRank, tdp, i);
 		struct rapl_limit rlim;
 		rlim.watts = tdp;
 		rlim.seconds = 1;
