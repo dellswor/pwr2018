@@ -29,7 +29,7 @@ int measure_children(PWR_Obj o)
 	PWR_ObjAttrGetValue( self, PWR_ATTR_ENERGY, &value, &ts );
 	char name[100];
 	PWR_ObjGetName( o, name, 100 );
-	fprintf(powerlogfile,"ENERGY, %f joules, %lu ms, %s\n", value, ms_now(), name);
+	fprintf(powerlogfile,"%lu %f %d\n",ms_now(), value, globalRank);
 
 	PWR_ObjType objType;
 	PWR_ObjGetType( o, &objType );
@@ -82,7 +82,7 @@ void *power_measurement(void *arg)
 		printf("failed to open erno is %i\n",errno);
 		exit(EXIT_FAILURE);
 	}
-
+	fprintf(powerlogfile,"time(ms) energy(J) GlobalRank\n");
 	// Get a context
 	PWR_CntxtInit( PWR_CNTXT_VENDOR, PWR_ROLE_MC, "Monitor", &cntxt );
 	PWR_CntxtGetEntryPoint( cntxt, &self );
