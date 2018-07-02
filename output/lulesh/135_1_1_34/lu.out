@@ -1,0 +1,44 @@
+------------
+Profiler Configuration
+output path: /home/nfs/kona/pwr2018/output/lulesh/135_1_1_34
+powercap: 135 watts
+monitoring frequency: 100000000 nano seconds
+------------
+Running problem size 34^3 per domain until completion
+Num processors: 1
+Num threads: 32
+Total number of elements: 39304
+
+To run other sizes, use -s <integer>.
+To run a fixed number of iterations, use -i <integer>.
+To run a more or less balanced region set, use -b <integer>.
+To change the relative costs of regions, use -c <integer>.
+To print out progress, use -p
+To write an output file for VisIt, use -v
+See help (-h) for more options
+
+PWR_ObjAttrSetValue valled
+attrSetValues called. count is 1
+for looooop
+attrSetValuesDevice called
+setValue valled
+Power set to 135.000000W for socket 0
+Power set to 135.000000W for socket 1
+attrSetValueDevice called from attrSetValues
+Run completed:  
+   Problem size        =  34 
+   MPI tasks           =  1 
+   Iteration count     =  1076 
+   Final Origin Energy = 2.543703e+05 
+   Testing Plane 0 of Energy Array on rank 0:
+        MaxAbsDiff   = 3.092282e-11
+        TotalAbsDiff = 1.128311e-09
+        MaxRelDiff   = 4.265172e-13
+
+
+Elapsed time         =      88.79 (s)
+Grind time (us/z/c)  =   2.099411 (per dom)  (  2.099411 overall)
+FOM                  =  476.32406 (z/s)
+
+Rank 0: Resetting power limit to 135.000000 for socket 0
+Rank 0: Resetting power limit to 135.000000 for socket 1

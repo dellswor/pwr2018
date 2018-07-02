@@ -68,7 +68,7 @@ int measure_energy()
 void *power_measurement(void *arg)
 {
 	char name[30];
-	sprintf(name, "%s/energy.%d.dat",config[0],nodeID);
+	sprintf(name, "%s/energy.%d.dat",getenv("PROFILER_OUTPUT_PATH"),nodeID);
 	powerlogfd=open(name,O_WRONLY|O_CREAT|O_NDELAY, S_IRUSR|S_IWUSR);
 	
 	if(powerlogfd<0)
@@ -89,9 +89,9 @@ void *power_measurement(void *arg)
 	static struct rapl_limit rlim;
 
 
-	rlim.watts = atof(config[1]);
+	rlim.watts = atof(getenv("PROFILER_POWERCAP"));
 	rlim.bits = 0;
-	rlim.seconds = atof(config[2]);
+	rlim.seconds = 1;
 	PWR_ObjType objType;
 	PWR_ObjGetType( self, &objType );
 	//set self to highest level in hierarchy
@@ -109,9 +109,10 @@ void *power_measurement(void *arg)
 	while(monitoring)
 	{
 		measure_energy();
-		sleep_abs(atoi(config[3]));
+		sleep_abs(atoi(getenv("PROFILER_FREQUENCY")));
 	}
 	fclose(powerlogfile);
 	close(powerlogfd);
-	pthread_exit(NULL);
+	int threadret=0;
+	pthread_exit(&threadret);
 }

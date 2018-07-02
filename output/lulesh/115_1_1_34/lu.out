@@ -1,0 +1,6 @@
+------------
+Profiler Configuration
+output path: /home/nfs/kona/pwr2018/output/lulesh/115_1_1_34
+powercap: 115 watts
+monitoring frequency: 100000000 nano seconds
+------------

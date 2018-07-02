@@ -1,0 +1,5 @@
+[node3:10312] *** Process received signal ***
+[node3:10312] Signal: Segmentation fault (11)
+[node3:10312] Signal code: Address not mapped (1)
+[node3:10312] Failing at address: 0x7f007461642e
+srun: error: node3: task 0: Segmentation fault (core dumped)
