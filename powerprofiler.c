@@ -29,12 +29,12 @@ int measure_children(PWR_Obj o)
 	PWR_ObjAttrGetValue( self, PWR_ATTR_ENERGY, &value, &ts );
 	char name[100];
 	PWR_ObjGetName( o, name, 100 );
-	fprintf(powerlogfile,"%lu %f %d\n",ms_now(), value, globalRank);
 
 	PWR_ObjType objType;
 	PWR_ObjGetType( o, &objType );
 	if(objType==PWR_OBJ_NODE)
 	{
+		fprintf(powerlogfile,"%lu %f %d\n",ms_now(), value, globalRank);
 		return 0;
 	}
 	else
