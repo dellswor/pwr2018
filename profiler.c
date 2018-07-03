@@ -38,8 +38,19 @@ int main()
 int init()
 {
 	MPI_Comm_rank(MPI_COMM_WORLD, &globalRank);
-	fflush(stdout);
-	localRank = atoi(getenv("SLURM_LOCALID"));
+	if(getenv("SLURM_LOCALID")!=NULL)
+	{
+		localRank = atoi(getenv("SLURM_LOCALID"));
+	}
+	else if(getenv("OMPI_COMM_WORLD_LOCAL_RANK")!=NULL)
+	{
+		localRank = atoi(getenv("OMPI_COMM_WORLD_LOCAL_RANK"));
+	}
+	else
+	{
+		printf("Use either mpirun or srun for local rank environmental variable.\n");
+		exit(EXIT_FAILURE);
+	}
 	char fname[100];
 	nodeID=globalRank-localRank;
 
