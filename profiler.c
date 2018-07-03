@@ -23,6 +23,10 @@ FILE *logfile=NULL;
 #include "pwr.h"
 #include "time.c"
 #include "powerprofiler.c"
+void writeAndFormat(long unsigned time, const char *funcname, int moment)
+{
+	fprintf(logfile, "%lu %s %d\n", time, funcname, moment);
+}
 #include "mpi_wrappers.c"
 int main()
 {
@@ -77,14 +81,11 @@ int init()
 			exit(EXIT_FAILURE);
 		}
 	}
-	fprintf(logfile, "time(ms) function_name, moment(0 is before function and 1 is after)\n");
+	fprintf(logfile, "time(ms) function_name moment\n");
 	fflush(stdout);
 	return 0;
 }
-void writeAndFormat(long unsigned time, char *funcname, int moment)
-{
-	fprintf(logfile, "%lu %s %d\n", time, funcname, moment);
-}
+
 int MPI_Init_thread(int *argc, char ***argv, int required, int *provided)
 {
 	int r;
