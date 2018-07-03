@@ -59,21 +59,19 @@ int init()
 	logfd=open(fname,O_WRONLY|O_CREAT|O_NDELAY, S_IRUSR|S_IWUSR);
 	if(logfd<0)
 	{
-		printf("Failed to get output file descriptor. %s\n",strerror(errno));
-		fflush(stdout);
+		printf("open failed in %s. %s\n",__FILE__,strerror(errno));
 		exit(EXIT_FAILURE);	
 	}
 	logfile = fdopen(logfd, "w");
 	if(logfile==NULL)
 	{
-		printf("Failed to open output file for write. %s\n",strerror(errno));
-		fflush(stdout);
+		printf("fdopen failed in %s. %s\n",__FILE__,strerror(errno));
 		exit(EXIT_FAILURE);
 	}
 	if(localRank == 0 ) {
 		if(pthread_create(&powThread, NULL, power_measurement, NULL)!=0)
 		{
-			printf("powerprofiler thread failed to start\n");
+			printf("pthread_create failed in %s.\n",__FILE__);
 			exit(EXIT_FAILURE);
 		}
 	}

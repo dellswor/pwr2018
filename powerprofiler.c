@@ -73,13 +73,13 @@ void *power_measurement(void *arg)
 	
 	if(powerlogfd<0)
 	{
-		printf("failed to get file descriptor: %i, errno: %i\n",powerlogfd,errno);
+		printf("open failed in %s. %s\n",__FILE__,strerror(errno));
 		exit(EXIT_FAILURE);
 	}
 	powerlogfile = fdopen(powerlogfd, "w");
 	if(powerlogfile==NULL)
 	{
-		printf("failed to open erno is %i\n",errno);
+		printf("fdopen failed in %s. %s\n",__FILE__,strerror(errno));
 		exit(EXIT_FAILURE);
 	}
 	fprintf(powerlogfile,"time(ms) energy(J) GlobalRank\n");
@@ -105,7 +105,7 @@ void *power_measurement(void *arg)
 	PWR_Obj child;
 	PWR_GrpGetObjByIndx( children, 0, &child );
 
-	PWR_ObjAttrSetValue( child,PWR_ATTR_POWER_LIMIT_MAX, &rlim );
+	//PWR_ObjAttrSetValue( child,PWR_ATTR_POWER_LIMIT_MAX, &rlim );
 	while(monitoring)
 	{
 		measure_energy();
