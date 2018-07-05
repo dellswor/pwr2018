@@ -21,20 +21,19 @@ double value;
 int powerlogfd;
 FILE *powerlogfile=NULL;
 
-
+int write_data(PWR_Obj o)
+{
+	PWR_ObjAttrGetValue( o, PWR_ATTR_ENERGY, &value, &ts );
+	fprintf(powerlogfile,"%lu %f %s\n",ms_now(), value, hostname);
+	return 0;
+}
 int measure_children(PWR_Obj o)
 {
-	inite = 0;
-
-	PWR_ObjAttrGetValue( self, PWR_ATTR_ENERGY, &value, &ts );
-	char name[100];
-	PWR_ObjGetName( o, name, 100 );
-
 	PWR_ObjType objType;
 	PWR_ObjGetType( o, &objType );
 	if(objType==PWR_OBJ_NODE)
 	{
-		fprintf(powerlogfile,"%lu %f %d\n",ms_now(), value, globalRank);
+		write_data(o);
 		return 0;
 	}
 	else
@@ -54,23 +53,31 @@ int measure_energy()
 {
 	PWR_ObjType objType;
 	PWR_ObjGetType( self, &objType );
-	//set self to highest level in hierarchy
-	while(objType!=PWR_OBJ_PLATFORM)
+	if(objType==PWR_OBJ_NODE)
 	{
-		PWR_ObjGetParent( self, &self );
-		PWR_ObjGetType( self, &objType );
-
+		write_data(self);
+		return 0;
 	}
-	measure_children(self);
+	else
+	{
+		//set self to highest level in hierarchy
+		while(objType!=PWR_OBJ_PLATFORM)
+		{
+			PWR_ObjGetParent( self, &self );
+			PWR_ObjGetType( self, &objType );
+
+		}
+		measure_children(self);
+	}
 	return 0;
 }
 
 void *power_measurement(void *arg)
 {
 	char name[30];
-	sprintf(name, "%s/energy.%d.dat",getenv("PROFILER_OUTPUT_PATH"),nodeID);
+	sprintf(name, "%s/energy.%s.dat",pathname,hostname);
 	powerlogfd=open(name,O_WRONLY|O_CREAT|O_NDELAY, S_IRUSR|S_IWUSR);
-	
+
 	if(powerlogfd<0)
 	{
 		printf("open failed in %s. %s\n",__FILE__,strerror(errno));
@@ -82,7 +89,7 @@ void *power_measurement(void *arg)
 		printf("fdopen failed in %s. %s\n",__FILE__,strerror(errno));
 		exit(EXIT_FAILURE);
 	}
-	fprintf(powerlogfile,"time(ms) energy(J) GlobalRank\n");
+	fprintf(powerlogfile,"time(ms) energy(J) hostname\n");
 	// Get a context
 	PWR_CntxtInit( PWR_CNTXT_VENDOR, PWR_ROLE_MC, "Monitor", &cntxt );
 	PWR_CntxtGetEntryPoint( cntxt, &self );

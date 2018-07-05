@@ -15,10 +15,11 @@
 static int monitoring =1;
 int globalRank=-1;
 int localRank = -1;
-int nodeID = -1;
+char hostname[64];
 pthread_t powThread;
 int logfd;
 FILE *logfile=NULL;
+char pathname[100];
 
 #include "pwr.h"
 #include "time.c"
@@ -52,13 +53,22 @@ int init()
 		exit(EXIT_FAILURE);
 	}
 	char fname[100];
-	nodeID=globalRank-localRank;
+	gethostname(hostname,64);
 
-	
+
+	if(getenv("PROFILER_OUTPUT_SUFFIX")==NULL)
+	{
+		sprintf(pathname, "%s",getenv("PROFILER_OUTPUT_PATH"));
+	}
+	else
+	{
+		sprintf(pathname, "%s%s",getenv("PROFILER_OUTPUT_PATH"),getenv("PROFILER_OUTPUT_SUFFIX"));
+	}
+	sprintf(fname,"%s/functions.rank%d.%s.dat",pathname,localRank,hostname);
 	if(globalRank==0){
 		printf("------------\n");
 		printf("Profiler Configuration\n");
-		printf("output path: %s\n",getenv("PROFILER_OUTPUT_PATH"));
+		printf("output path: %s\n",pathname);
 		if(atoi(getenv("PROFILER_POWERCAP"))==-1)
 		{
 			printf("powercap set to TDP of socket\n");
@@ -70,7 +80,6 @@ int init()
 		printf("monitoring frequency: %s nano seconds\n",getenv("PROFILER_FREQUENCY"));
 		printf("------------\n");
 	}
-	sprintf(fname, "%s/functions.%d.%d.dat",getenv("PROFILER_OUTPUT_PATH"),localRank, nodeID);
 	logfd=open(fname,O_WRONLY|O_CREAT|O_NDELAY, S_IRUSR|S_IWUSR);
 	if(logfd<0)
 	{
