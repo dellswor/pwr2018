@@ -113,10 +113,11 @@ void *power_measurement(void *arg)
 	PWR_GrpGetObjByIndx( children, 0, &child );
 
 	//PWR_ObjAttrSetValue( child,PWR_ATTR_POWER_LIMIT_MAX, &rlim );
+	timer_init(atoi(getenv("PROFILER_FREQUENCY")));
 	while(monitoring)
 	{
 		measure_energy();
-		sleep_abs(atoi(getenv("PROFILER_FREQUENCY")));
+		timer_sleep();
 	}
 	fclose(powerlogfile);
 	close(powerlogfd);
