@@ -11,7 +11,7 @@
 #define INTERVAL_SEC 0
 #define INTERVAL_NANO 100000000
 
-static int inite;
+
 
 PWR_Grp     grp;
 PWR_Obj     self;

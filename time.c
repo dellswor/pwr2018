@@ -25,6 +25,7 @@ int timer_init(unsigned long ns)
 {
 	init_time = ns_now();
 	interval = ns;
+	return 0;
 }
 int timer_sleep()
 {
@@ -33,7 +34,7 @@ int timer_sleep()
 		init_time=ns_now();
 	}
 	clock_gettime(CLOCK_MONOTONIC, &t);
-	if(t.tv_nsec+ns <= MAX_NANO)
+	if(t.tv_nsec+interval <= MAX_NANO)
 	{
 		t.tv_nsec+=interval;
 	}
