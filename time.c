@@ -29,21 +29,17 @@ int timer_init(unsigned long ns)
 }
 int timer_sleep()
 {
-	if(count==1)
-	{
-		init_time=ns_now();
-	}
+	unsigned long diff = interval*count+init_time - ns_now();
 	clock_gettime(CLOCK_MONOTONIC, &t);
-	if(t.tv_nsec+interval <= MAX_NANO)
+	if(t.tv_nsec+diff <= MAX_NANO)
 	{
-		t.tv_nsec+=interval;
+		t.tv_nsec+=diff;
 	}
 	else
 	{
 		t.tv_sec+=1;
-		t.tv_nsec+=interval-MAX_NANO;
+		t.tv_nsec+=diff-MAX_NANO;
 	}
-	t.tv_nsec -= ns_now() - interval*count+init_time;
 	count++;
 	return clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &t, NULL);
 }
