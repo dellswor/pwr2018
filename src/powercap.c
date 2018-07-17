@@ -9,8 +9,11 @@ int set_powercap_children(PWR_Obj o)
 	PWR_ObjGetType( o, &objType );
 	if(objType==PWR_OBJ_NODE)
 	{
-		printf("set value %d\n",PWR_ObjAttrSetValue(o,PWR_ATTR_TEMP,&value));
-		printf("powercap should be set\n");
+		PWR_ObjAttrSetValue(o,PWR_ATTR_POWER_LIMIT_MAX,&value);
+		double val;
+		PWR_Time ts;
+		PWR_ObjAttrGetValue(o, PWR_ATTR_POWER_LIMIT_MAX,&val,&ts);
+		printf("Power cap set to %lf\n",val);
 		return 0;
 	}
 	else
@@ -33,7 +36,7 @@ int main(int argc, char **argv){
 	PWR_CntxtGetEntryPoint( cntxt, &self );
 	PWR_ObjType objType;
 	PWR_ObjGetType( self, &objType );
-	value=atof(argv[0]);
+	value=atof(argv[1]);
 	set_powercap_children(self);
 	
 }
