@@ -1,0 +1,134 @@
+int MPI_Allgather(const void *sendbuf, int  sendcount,MPI_Datatype sendtype, void *recvbuf, int recvcount,MPI_Datatype recvtype, MPI_Comm comm)
+int MPI_Allgatherv(const void *sendbuf, int sendcount,MPI_Datatype sendtype, void *recvbuf, const int recvcounts[],const int displs[], MPI_Datatype recvtype, MPI_Comm comm)
+int MPI_Allreduce(const void *sendbuf, void *recvbuf, int count,MPI_Datatype datatype, MPI_Op op, MPI_Comm comm)
+int MPI_Alltoall(const void *sendbuf, int sendcount,MPI_Datatype sendtype, void *recvbuf, int recvcount,MPI_Datatype recvtype, MPI_Comm comm)
+int MPI_Alltoallv(const void *sendbuf, const int sendcounts[],
+    const int sdispls[], MPI_Datatype sendtype,
+    void *recvbuf, const int recvcounts[],
+    const int rdispls[], MPI_Datatype recvtype, MPI_Comm comm)
+    int MPI_Alltoallw(const void *sendbuf, const int sendcounts[],
+    const int sdispls[], const MPI_Datatype sendtypes[],
+    void *recvbuf, const int recvcounts[], const int rdispls[],
+    const MPI_Datatype recvtypes[], MPI_Comm comm)
+    int MPI_Barrier(MPI_Comm comm)
+    int MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
+    int root, MPI_Comm comm)
+    int MPI_Bsend(const void *buf, int count, MPI_Datatype datatype,
+    int dest, int tag, MPI_Comm comm)
+    int MPI_Buffer_detach(void *buf, int *size)
+    int MPI_Comm_join(int fd, MPI_Comm *intercomm)
+    int MPI_File_read_all(MPI_File fh, void *buf,
+    int count, MPI_Datatype datatype, MPI_Status *status)
+    int MPI_Exscan(const void *sendbuf, void *recvbuf, int count,
+    MPI_Datatype datatype, MPI_Op op, MPI_Comm comm)
+    int MPI_File_read_all_end(MPI_File fh, void *buf,
+        MPI_Status *status)
+        int MPI_File_read_at(MPI_File fh, MPI_Offset offset,
+    void *buf, int count, MPI_Datatype datatype,
+    MPI_Status *status)
+    int MPI_File_read_at_all(MPI_File fh, MPI_Offset offset,
+    void *buf, int count, MPI_Datatype datatype,
+    MPI_Status *status)
+    int MPI_File_read_at_all_end(MPI_File fh, void *buf,
+    MPI_Status *status)
+    int MPI_File_read_ordered(MPI_File fh, void *buf,
+    int count, MPI_Datatype datatype,
+    MPI_Status *status)
+    int MPI_File_read_ordered_end(MPI_File fh, void *buf,
+    MPI_Status *status)
+    int MPI_File_read_shared(MPI_File fh, void *buf, int count,
+    MPI_Datatype datatype, MPI_Status *status)
+    int MPI_File_read(MPI_File fh, void *buf,
+    int count, MPI_Datatype datatype, MPI_Status *status)
+    int MPI_File_seek_shared(MPI_File fh, MPI_Offset offset,
+    int whence)
+    int MPI_File_write(MPI_File fh, const void *buf,
+    int count, MPI_Datatype datatype,
+    MPI_Status *status)
+    int MPI_File_write_all(MPI_File fh, const void *buf,
+    int count, MPI_Datatype datatype, MPI_Status *status)
+    int MPI_File_write_all_end(MPI_File fh, const void *buf, MPI_Status *status)
+    int MPI_File_write_at(MPI_File fh, MPI_Offset offset, const void *buf,
+    int count, MPI_Datatype datatype, MPI_Status *status)
+    int MPI_File_write_at_all(MPI_File fh, MPI_Offset offset, const void *buf,
+    int count, MPI_Datatype datatype, MPI_Status *status)
+    int MPI_File_write_at_all_end(MPI_File fh, const void *buf,
+    MPI_Status *status)
+    int MPI_File_write_ordered(MPI_File fh, const void *buf,
+    int count, MPI_Datatype datatype,
+    MPI_Status *status)
+    int MPI_File_write_ordered_end(MPI_File fh, const void *buf,
+    MPI_Status *status)
+    int MPI_File_write_shared(MPI_File fh, const void *buf, int count,
+    MPI_Datatype datatype, MPI_Status *status)
+    int MPI_Gather(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
+    void *recvbuf, int recvcount, MPI_Datatype recvtype, int root,
+    MPI_Comm comm)
+    int MPI_Gatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
+    void *recvbuf, const int recvcounts[], const int displs[], MPI_Datatype
+recvtype,
+    int root, MPI_Comm comm)
+    int MPI_Mprobe(int source, int tag, MPI_Comm comm,
+    MPI_Message *message, MPI_Status *status)
+    int MPI_Mrecv(void *buf, int count, MPI_Datatype type,
+    MPI_Message *message, MPI_Status *status)
+    int MPI_Neighbor_allgather(const void *sendbuf, int  sendcount,
+    MPI_Datatype sendtype, void *recvbuf, int recvcount,
+     MPI_Datatype recvtype, MPI_Comm comm)
+     int MPI_Neighbor_allgatherv(const void *sendbuf, int sendcount,
+    MPI_Datatype sendtype, void *recvbuf, const int recvcounts[],
+    const int displs[], MPI_Datatype recvtype, MPI_Comm comm)
+    int MPI_Neighbor_alltoall(const void *sendbuf, int sendcount,
+    MPI_Datatype sendtype, void *recvbuf, int recvcount,
+    MPI_Datatype recvtype, MPI_Comm comm)
+    int MPI_Neighbor_alltoallv(const void *sendbuf, const int sendcounts[],
+    const int sdispls[], MPI_Datatype sendtype,
+    void *recvbuf, const int recvcounts[],
+    const int rdispls[], MPI_Datatype recvtype, MPI_Comm comm)
+    int MPI_Neighbor_alltoallw(const void *sendbuf, const int sendcounts[],
+    const MPI_Aint sdispls[], const MPI_Datatype sendtypes[],
+    void *recvbuf, const int recvcounts[], const MPI_Aint rdispls[],
+    const MPI_Datatype recvtypes[], MPI_Comm comm)
+    int MPI_Probe(int source, int tag, MPI_Comm comm, MPI_Status *status)
+    int MPI_Recv(void *buf, int count, MPI_Datatype datatype,
+    int source, int tag, MPI_Comm comm, MPI_Status *status)
+    int MPI_Reduce(const void *sendbuf, void *recvbuf, int count,
+               MPI_Datatype datatype, MPI_Op op, int root,
+               MPI_Comm comm)
+               int MPI_Reduce_scatter(const void *sendbuf, void *recvbuf, const int recvcounts[],
+    MPI_Datatype datatype, MPI_Op op, MPI_Comm comm)
+    int MPI_Reduce_scatter_block(const void *sendbuf, void *recvbuf, int recvcount,
+    MPI_Datatype datatype, MPI_Op op, MPI_Comm comm)
+    int MPI_Scan(const void *sendbuf, void *recvbuf, int count,
+             MPI_Datatype datatype, MPI_Op op, MPI_Comm comm)
+             int MPI_Scatter(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
+    void *recvbuf, int recvcount, MPI_Datatype recvtype, int root,
+    MPI_Comm comm)
+    int MPI_Scatterv(const void *sendbuf, const int sendcounts[], const int
+displs[],
+    MPI_Datatype sendtype, void *recvbuf, int recvcount,
+    MPI_Datatype recvtype, int root, MPI_Comm comm)
+    int MPI_Send(const void *buf, int count, MPI_Datatype datatype, int dest,
+    int tag, MPI_Comm comm)
+    int MPI_Sendrecv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
+    int dest, int sendtag, void *recvbuf, int recvcount,
+    MPI_Datatype recvtype, int source, int recvtag,
+    MPI_Comm comm, MPI_Status *status)
+    int MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype,
+    int dest, int sendtag, int source, int recvtag, MPI_Comm comm,
+    MPI_Status *status)
+    int MPI_Ssend(const void *buf, int count, MPI_Datatype datatype, int dest,
+    int tag, MPI_Comm comm)
+    int MPI_Wait(MPI_Request *request, MPI_Status *status)
+    int MPI_Waitall(int count, MPI_Request array_of_requests[],
+    MPI_Status *array_of_statuses)
+    int MPI_Waitany(int count, MPI_Request array_of_requests[],
+    int *index, MPI_Status *status)
+    int MPI_Waitsome(int incount, MPI_Request array_of_requests[],
+    int *outcount, int array_of_indices[],
+    MPI_Status array_of_statuses[])
+    int MPI_Win_allocate_shared (MPI_Aint size, int disp_unit, MPI_Info info,
+                             MPI_Comm comm, void *baseptr, MPI_Win *win)
+                             int MPI_Win_fence(int assert, MPI_Win win)
+                             int MPI_Win_sync (MPI_Win win)
+int MPI_Win_wait(MPI_Win win)

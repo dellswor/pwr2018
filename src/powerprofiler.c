@@ -93,26 +93,6 @@ void *power_measurement(void *arg)
 	// Get a context
 	PWR_CntxtInit( PWR_CNTXT_VENDOR, PWR_ROLE_MC, "Monitor", &cntxt );
 	PWR_CntxtGetEntryPoint( cntxt, &self );
-	static struct rapl_limit rlim;
-
-
-	rlim.watts = atof(getenv("PROFILER_POWERCAP"));
-	rlim.bits = 0;
-	rlim.seconds = 1;
-	PWR_ObjType objType;
-	PWR_ObjGetType( self, &objType );
-	//set self to highest level in hierarchy
-	while(objType!=PWR_OBJ_PLATFORM)
-	{
-		PWR_ObjGetParent( self, &self );
-		PWR_ObjGetType( self, &objType );
-	}
-	PWR_Grp children;
-	PWR_ObjGetChildren( self, &children );
-	PWR_Obj child;
-	PWR_GrpGetObjByIndx( children, 0, &child );
-
-	//PWR_ObjAttrSetValue( child,PWR_ATTR_POWER_LIMIT_MAX, &rlim );
 	timer_init(atoi(getenv("PROFILER_FREQUENCY")));
 	while(monitoring)
 	{

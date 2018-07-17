@@ -69,14 +69,6 @@ int init()
 		printf("------------\n");
 		printf("Profiler Configuration\n");
 		printf("output path: %s\n",pathname);
-		if(atoi(getenv("PROFILER_POWERCAP"))==-1)
-		{
-			printf("powercap set to TDP of socket\n");
-		}
-		else
-		{
-			printf("powercap: %s watts\n",getenv("PROFILER_POWERCAP"));
-		}
 		printf("monitoring frequency: %s nano seconds\n",getenv("PROFILER_FREQUENCY"));
 		printf("------------\n");
 	}
@@ -130,22 +122,7 @@ int MPI_Finalize()
 	r=PMPI_Finalize();
 	fflush(stdout);
 	monitoring=0;
-	if(localRank==0)
-	{
-		poll_rapl_data();
-		for(int i=0; i<num_sockets(); i++)
-		{
-			struct rapl_power_info raplinfo;
-			get_rapl_power_info(i, &raplinfo);
-			double tdp = raplinfo.pkg_therm_power;
-			printf("Rank %d: Resetting power limit to %lf for socket %d\n",globalRank, tdp, i);
-			struct rapl_limit rlim;
-			rlim.watts = tdp;
-			rlim.seconds = 1;
-			rlim.bits = 0;
-			set_pkg_rapl_limit(i, &rlim,&rlim);
-		}
-	}
+
 	fflush(stdout);
 	if(localRank==0)
 	{
