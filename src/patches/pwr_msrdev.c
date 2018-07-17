@@ -107,16 +107,27 @@ int pwr_msrdev_read( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int l
 		return -1;
 	}
 	poll_rapl_data();
-	int sockets = num_sockets();
-	for(int s = 0; s<sockets; s++)
+	int snum = num_sockets();
+	for(int s = 0; s<snum; s++)
 	{
 		energy += rdat->pkg_delta_joules[s];
 	}
-
+	double total;
 	switch( attr ) {
 		case PWR_ATTR_ENERGY:
 			*((double *)value) = energy;
 			break;
+		case PWR_ATTR_POWER_LIMIT_MAX:
+			total = 0;
+			for(int s = 0; s<snum; s++)
+			{
+				struct rapl_limit rlimg;
+	        	        get_pkg_rapl_limit(s, &rlimg, NULL);
+				total+=rlimg.watts;
+			}
+			*((double *)value) = total;
+			break;
+
 		default:
 			fprintf( stderr, "Warning: unknown PWR reading attr requested\n" );
 			break;
@@ -136,32 +147,28 @@ int pwr_msrdev_read( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int l
 int pwr_msrdev_write( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int len )
 {
 
-	//printf("msrdev_write called\n");
-	if(attr==PWR_ATTR_POWER_LIMIT_MAX)
+	struct rapl_limit rlim;
+	int snum;
+	double val = *(double *)value;
+	switch( attr )
 	{
-		struct rapl_limit *rlimp = (struct rapl_limit *)value;
-		double cap = rlimp->watts;
-		int sockets = num_sockets();
-		for(int s = 0; s<sockets; s++)
-		{
-			if(cap == -1)
-        	        {
-        	                struct rapl_power_info raplinfo;
-        	                get_rapl_power_info(s, &raplinfo);
-        	                rlimp->watts = raplinfo.pkg_therm_power;
-				cap=rlimp->watts;
-	                }
-			set_pkg_rapl_limit(s,rlimp, rlimp);
-			struct rapl_limit rlimg;
-	                get_pkg_rapl_limit(s, &rlimg, NULL);
-	                printf("Power set to %lfW for socket %d\n", rlimg.watts, s);
-		}
-		return PWR_RET_SUCCESS;
+		case PWR_ATTR_POWER_LIMIT_MAX:
+			snum = num_sockets();
+			rlim.watts=val/snum;
+			rlim.bits=0;
+			rlim.seconds=1;
+			for(int s = 0; s<snum; s++)
+			{
+				set_pkg_rapl_limit(s, &rlim, &rlim);
+				struct rapl_limit rlimg;
+	        	        get_pkg_rapl_limit(s, &rlimg, NULL);
+			}
+			break;
+		default:
+			fprintf(stderr,"Warning: unknown PWR writing attr requested\n");
+			break;
 	}
-	else
-	{
-		return PWR_RET_FAILURE;
-	}
+
 }
 
 int pwr_msrdev_readv( pwr_fd_t fd, unsigned int arraysize,
