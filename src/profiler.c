@@ -11,7 +11,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
-
 static int monitoring =1;
 int globalRank=-1;
 int localRank = -1;
@@ -28,7 +27,9 @@ void writeAndFormat(long unsigned time, const char *funcname, int moment)
 {
 	fprintf(logfile, "%lu %s %d\n", time, funcname, moment);
 }
+#if WRAPPER_TOG==1
 #include "mpi_wrappers.c"
+#endif
 int main()
 {
 	return 0;

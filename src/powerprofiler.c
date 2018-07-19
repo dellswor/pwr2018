@@ -24,7 +24,7 @@ FILE *powerlogfile=NULL;
 int write_data(PWR_Obj o)
 {
 	PWR_ObjAttrGetValue( o, PWR_ATTR_ENERGY, &value, &ts );
-	fprintf(powerlogfile,"%lu %f %s\n",ms_now(), value, hostname);
+	fprintf(powerlogfile,"%lu %lf %s\n",ms_now(), value, hostname);
 	return 0;
 }
 int measure_children(PWR_Obj o)
