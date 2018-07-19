@@ -100,8 +100,7 @@ int pwr_msrdev_read( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int l
 	struct timeval tv;
 #endif
 	energy=PWR_MSRFD(fd)->dev->energy;
-	DBGP( "Info: PWR RAPL device read\n" );
-	//printf("energy from fd is %lf\n",energy);
+
 	if( len != sizeof(double) ) {
 		fprintf( stderr, "Error: value field size of %u incorrect, should be %ld\n", len, sizeof(double) );
 		return -1;
@@ -110,7 +109,7 @@ int pwr_msrdev_read( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int l
 	int snum = num_sockets();
 	for(int s = 0; s<snum; s++)
 	{
-		energy += rdat->pkg_delta_joules[s];
+		energy = rdat->pkg_delta_joules[s];
 	}
 	double total;
 	switch( attr ) {
@@ -148,27 +147,31 @@ int pwr_msrdev_write( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int 
 {
 
 	struct rapl_limit rlim;
+	struct rapl_limit rlim2;
 	int snum;
 	double val = *(double *)value;
+	poll_rapl_data();
 	switch( attr )
 	{
 		case PWR_ATTR_POWER_LIMIT_MAX:
 			snum = num_sockets();
 			rlim.watts=val/snum;
+			rlim2.watts=val/snum;
 			rlim.bits=0;
+			rlim2.bits=0;
 			rlim.seconds=1;
+			rlim2.seconds=1;
 			for(int s = 0; s<snum; s++)
 			{
-				set_pkg_rapl_limit(s, &rlim, &rlim);
-				struct rapl_limit rlimg;
-	        	        get_pkg_rapl_limit(s, &rlimg, NULL);
+				printf("power cap was set to %lf in %s\n",rlim.watts,__FILE__);
+				set_pkg_rapl_limit(s, &rlim, &rlim2);
 			}
 			break;
 		default:
 			fprintf(stderr,"Warning: unknown PWR writing attr requested\n");
 			break;
 	}
-
+	return 0;
 }
 
 int pwr_msrdev_readv( pwr_fd_t fd, unsigned int arraysize,

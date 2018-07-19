@@ -74,5 +74,5 @@ libpwr_powercapdev_la_CFLAGS = -I$(top_srcdir)/src/pwr
 libpwr_powercapdev_la_LDFLAGS = -version-info 1:0:1
 
 libpwr_msrdev_la_SOURCES = pwr_dev.c pwr_msrdev.c
-libpwr_msrdev_la_CFLAGS = -I$(top_srcdir)/src/pwr -I/home/nfs/kona/libmsr/build/libmsr/include -L/home/nfs/kona/libmsr/build/libmsr/lib -lmsr
+libpwr_msrdev_la_CFLAGS = -I$(top_srcdir)/src/pwr -I/home/kona/libmsr/build/libmsr/include -L/home/kona/libmsr/build/libmsr/lib -lmsr
 libpwr_msrdev_la_LDFLAGS = -version-info 1:0:1
