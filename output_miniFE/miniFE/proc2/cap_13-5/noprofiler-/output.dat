@@ -1,0 +1,33 @@
+--------------------------------------------------------------------------
+[[5191,1],0]: A high-performance Open MPI point-to-point messaging module
+was unable to find any relevant network interfaces:
+
+Module: OpenFabrics (openib)
+  Host: power2018
+
+Another transport will be used instead, although this may result in
+lower performance.
+--------------------------------------------------------------------------
+MiniFE Mini-App, OpenMP Peer Implementation
+Creating OpenMP Thread Pool...
+Counted: 4 threads.
+Running MiniFE Mini-App...
+      creating/filling mesh...0.194772s, total time: 0.194773
+generating matrix structure...8.15738s, total time: 8.35215
+         assembling FE data...27.425s, total time: 35.7771
+      imposing Dirichlet BC...6.99523s, total time: 42.7724
+      imposing Dirichlet BC...3.42888s, total time: 46.2012
+making matrix indices local...1.20141s, total time: 47.4026
+Starting CG solver ... 
+Initial Residual = 257.002
+Iteration = 20   Residual = 0.0575607
+Iteration = 40   Residual = 0.163455
+Iteration = 60   Residual = 0.0158889
+Iteration = 80   Residual = 0.0109815
+Iteration = 100   Residual = 0.0442886
+Iteration = 120   Residual = 0.00594984
+Iteration = 140   Residual = 0.004553
+Iteration = 160   Residual = 0.00668634
+Iteration = 180   Residual = 0.00259085
+Iteration = 200   Residual = 0.00193484
+Final Resid Norm: 0.00193484

@@ -1,0 +1,6 @@
+[power2018:02334] 1 more process has sent help message help-mpi-btl-base.txt / btl:no-nics
+[power2018:02334] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+
+real	3m54.060s
+user	8m46.192s
+sys	0m6.696s

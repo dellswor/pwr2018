@@ -1,0 +1,38 @@
+--------------------------------------------------------------------------
+[[5389,1],0]: A high-performance Open MPI point-to-point messaging module
+was unable to find any relevant network interfaces:
+
+Module: OpenFabrics (openib)
+  Host: power2018
+
+Another transport will be used instead, although this may result in
+lower performance.
+--------------------------------------------------------------------------
+------------
+Profiler Configuration
+output path: /home/kona/pwr2018/output_miniFE/miniFE/proc2/cap_9-5/profiler-
+monitoring frequency: 100000000 nano seconds
+------------
+MiniFE Mini-App, OpenMP Peer Implementation
+Creating OpenMP Thread Pool...
+Counted: 4 threads.
+Running MiniFE Mini-App...
+      creating/filling mesh...0.231397s, total time: 0.231398
+generating matrix structure...8.21198s, total time: 8.44338
+         assembling FE data...33.9104s, total time: 42.3538
+      imposing Dirichlet BC...8.1502s, total time: 50.504
+      imposing Dirichlet BC...4.12041s, total time: 54.6244
+making matrix indices local...1.35378s, total time: 55.9782
+Starting CG solver ... 
+Initial Residual = 257.002
+Iteration = 20   Residual = 0.0575607
+Iteration = 40   Residual = 0.163455
+Iteration = 60   Residual = 0.0158889
+Iteration = 80   Residual = 0.0109815
+Iteration = 100   Residual = 0.0442886
+Iteration = 120   Residual = 0.00594984
+Iteration = 140   Residual = 0.004553
+Iteration = 160   Residual = 0.00668634
+Iteration = 180   Residual = 0.00259085
+Iteration = 200   Residual = 0.00193484
+Final Resid Norm: 0.00193484
