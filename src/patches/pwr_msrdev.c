@@ -163,8 +163,7 @@ int pwr_msrdev_write( pwr_fd_t fd, PWR_AttrName attr, void *value, unsigned int 
 			rlim2.seconds=1;
 			for(int s = 0; s<snum; s++)
 			{
-				printf("power cap was set to %lf in %s\n",rlim.watts,__FILE__);
-				set_pkg_rapl_limit(s, &rlim, &rlim2);
+						set_pkg_rapl_limit(s, &rlim, &rlim2);
 			}
 			break;
 		default:
