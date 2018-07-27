@@ -14,7 +14,7 @@ int set_powercap_children(PWR_Obj o)
 		double val;
 		PWR_Time ts;
 		PWR_ObjAttrGetValue(o, PWR_ATTR_POWER_LIMIT_MAX,&val,&ts);
-
+		fprintf(stderr,"Power cap set to %lf\n",val);
 		return 0;
 	}
 	else
