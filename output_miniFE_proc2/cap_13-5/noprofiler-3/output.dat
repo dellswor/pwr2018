@@ -1,0 +1,28 @@
+------------
+Profiler Configuration
+output path: /home/tc/pwr2018/output_miniFE_proc2//cap_13/profiler-3
+monitoring frequency: 100000000 nano seconds
+------------
+MiniFE Mini-App, OpenMP Peer Implementation
+Creating OpenMP Thread Pool...
+Counted: 4 threads.
+Running MiniFE Mini-App...
+      creating/filling mesh...0.114567s, total time: 0.114568
+generating matrix structure...4.91506s, total time: 5.02963
+         assembling FE data...16.2202s, total time: 21.2499
+      imposing Dirichlet BC...5.845s, total time: 27.0949
+      imposing Dirichlet BC...2.00979s, total time: 29.1047
+making matrix indices local...0.715903s, total time: 29.8206
+Starting CG solver ... 
+Initial Residual = 251.002
+Iteration = 20   Residual = 0.0574465
+Iteration = 40   Residual = 0.0264589
+Iteration = 60   Residual = 0.0955433
+Iteration = 80   Residual = 0.0108864
+Iteration = 100   Residual = 0.0079328
+Iteration = 120   Residual = 0.00595527
+Iteration = 140   Residual = 0.00454312
+Iteration = 160   Residual = 0.0270161
+Iteration = 180   Residual = 0.00254285
+Iteration = 200   Residual = 0.00187711
+Final Resid Norm: 0.00187711

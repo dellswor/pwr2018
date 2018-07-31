@@ -1,0 +1,1 @@
+-nx 250 -ny 250 -nz 250 proc=2 freq=100ms powercap=12.5
