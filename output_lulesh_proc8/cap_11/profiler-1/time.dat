@@ -1,0 +1,4 @@
+/dev/cpu/msr_batch: No such file or directory
+real	1m 38.31s
+user	6m 32.82s
+sys	0m 0.11s
