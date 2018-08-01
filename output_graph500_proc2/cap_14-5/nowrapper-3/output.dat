@@ -1,0 +1,39 @@
+------------
+Profiler Configuration
+output path: /home/tc/pwr2018/output_graph500_proc2//cap_14-5/nowrapper-3
+monitoring frequency: 100000000 nano seconds
+------------
+SCALE:                          20
+edgefactor:                     16
+NBFS:                           64
+graph_generation:               3.24374
+num_mpi_processes:              2
+construction_time:              0.869113
+bfs  min_time:                  0.29934
+bfs  firstquartile_time:        0.300044
+bfs  median_time:               0.30026
+bfs  thirdquartile_time:        0.300769
+bfs  max_time:                  0.302288
+bfs  mean_time:                 0.300438
+bfs  stddev_time:               0.000601575
+min_nedge:                      16775818
+firstquartile_nedge:            16775818
+median_nedge:                   16775818
+thirdquartile_nedge:            16775818
+max_nedge:                      16775818
+mean_nedge:                     16775818
+stddev_nedge:                   0
+bfs  min_TEPS:                  5.54961e+07
+bfs  firstquartile_TEPS:        5.57765e+07
+bfs  median_TEPS:               5.58709e+07
+bfs  thirdquartile_TEPS:        5.59112e+07
+bfs  max_TEPS:                  5.60428e+07
+bfs  harmonic_mean_TEPS:     !  5.58378e+07
+bfs  harmonic_stddev_TEPS:      14086.1
+bfs  min_validate:              1.05113
+bfs  firstquartile_validate:    1.05299
+bfs  median_validate:           1.05398
+bfs  thirdquartile_validate:    1.05495
+bfs  max_validate:              1.06725
+bfs  mean_validate:             1.05525
+bfs  stddev_validate:           0.00403613

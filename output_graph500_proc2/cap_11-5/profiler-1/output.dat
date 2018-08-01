@@ -1,0 +1,39 @@
+------------
+Profiler Configuration
+output path: /home/tc/pwr2018/output_graph500_proc2//cap_11-5/profiler-1
+monitoring frequency: 100000000 nano seconds
+------------
+SCALE:                          20
+edgefactor:                     16
+NBFS:                           64
+graph_generation:               3.55129
+num_mpi_processes:              2
+construction_time:              0.919437
+bfs  min_time:                  0.340712
+bfs  firstquartile_time:        0.34148
+bfs  median_time:               0.341791
+bfs  thirdquartile_time:        0.342774
+bfs  max_time:                  0.344788
+bfs  mean_time:                 0.342112
+bfs  stddev_time:               0.000886113
+min_nedge:                      16775818
+firstquartile_nedge:            16775818
+median_nedge:                   16775818
+thirdquartile_nedge:            16775818
+max_nedge:                      16775818
+mean_nedge:                     16775818
+stddev_nedge:                   0
+bfs  min_TEPS:                  4.86555e+07
+bfs  firstquartile_TEPS:        4.89414e+07
+bfs  median_TEPS:               4.90821e+07
+bfs  thirdquartile_TEPS:        4.91268e+07
+bfs  max_TEPS:                  4.92375e+07
+bfs  harmonic_mean_TEPS:     !  4.90361e+07
+bfs  harmonic_stddev_TEPS:      16001.7
+bfs  min_validate:              1.19519
+bfs  firstquartile_validate:    1.20598
+bfs  median_validate:           1.20797
+bfs  thirdquartile_validate:    1.21085
+bfs  max_validate:              1.21951
+bfs  mean_validate:             1.20836
+bfs  stddev_validate:           0.00437494
