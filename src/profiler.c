@@ -116,19 +116,11 @@ int MPI_Finalize()
 {
 	int r;
 
-
+	fflush(logfile);
 	fclose(logfile);
 	close(logfd);
-
+	fflush(stdout);
 	r=PMPI_Finalize();
-	fflush(stdout);
 	monitoring=0;
-
-	fflush(stdout);
-	if(localRank==0)
-	{
-		//pthread_join(powThread,NULL);
-	}
-	fflush(stdout);
 	return r;
 }

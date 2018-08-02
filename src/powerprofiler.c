@@ -99,6 +99,7 @@ void *power_measurement(void *arg)
 		measure_energy();
 		timer_sleep();
 	}
+	fflush(powerlogfile);
 	fclose(powerlogfile);
 	close(powerlogfd);
 	int threadret=0;
